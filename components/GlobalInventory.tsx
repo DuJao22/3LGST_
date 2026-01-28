@@ -26,12 +26,12 @@ const GlobalInventory: React.FC = () => {
         {/* Left: Product List */}
         <div className="flex-1 bg-zinc-900 rounded-sm border border-green-900/30 flex flex-col overflow-hidden shadow-lg">
              <div className="p-4 border-b border-green-900/50 bg-black">
-                <h2 className="text-xl font-bold text-green-500 mb-4 uppercase tracking-wider font-mono">Global_Inventory_Matrix</h2>
+                <h2 className="text-xl font-bold text-green-500 mb-4 uppercase tracking-wider font-mono">Matriz_Estoque_Global</h2>
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-700 w-5 h-5" />
                     <input
                     type="text"
-                    placeholder="SCAN_ITEM_ID..."
+                    placeholder="ESCANEAR_ID_ITEM..."
                     className="w-full bg-zinc-900 border border-green-900 rounded-sm pl-10 pr-4 py-2 text-green-400 focus:border-green-500 outline-none font-mono placeholder-zinc-700"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -61,7 +61,7 @@ const GlobalInventory: React.FC = () => {
                                 <p className="text-[10px] text-zinc-600 font-mono">{product.category}</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm font-bold text-white font-mono">{totalStock} units</p>
+                                <p className="text-sm font-bold text-white font-mono">{totalStock} unid.</p>
                                 <p className="text-[10px] text-zinc-600 uppercase">Total_Sys</p>
                             </div>
                         </div>
@@ -74,7 +74,7 @@ const GlobalInventory: React.FC = () => {
         <div className="w-full lg:w-96 bg-zinc-900 rounded-sm border border-green-900/30 flex flex-col">
             <div className="p-4 border-b border-green-900/50 bg-black">
                 <h3 className="font-bold text-green-500 flex items-center uppercase tracking-wider font-mono">
-                    <Settings2 className="w-5 h-5 mr-2" /> Modify_Allocations
+                    <Settings2 className="w-5 h-5 mr-2" /> Modificar_Alocações
                 </h3>
             </div>
             
@@ -99,7 +99,7 @@ const GlobalInventory: React.FC = () => {
                                                 value={qty}
                                                 onChange={(e) => handleStockUpdate(store.id, parseInt(e.target.value) || 0)}
                                             />
-                                            <span className="text-xs text-zinc-600 font-mono uppercase w-12">units</span>
+                                            <span className="text-xs text-zinc-600 font-mono uppercase w-12">unid.</span>
                                         </div>
                                     </div>
                                 );
@@ -109,7 +109,7 @@ const GlobalInventory: React.FC = () => {
                 ) : (
                     <div className="h-full flex flex-col items-center justify-center text-zinc-700 font-mono">
                         <Package className="w-12 h-12 mb-2 opacity-20" />
-                        <p className="text-xs text-center uppercase">[AWAITING_ITEM_SELECTION]</p>
+                        <p className="text-xs text-center uppercase">[AGUARDANDO_SELEÇÃO]</p>
                     </div>
                 )}
             </div>

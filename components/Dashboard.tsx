@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-green-900/30 pb-4">
         <h1 className="text-2xl font-bold text-green-500 uppercase tracking-widest flex items-center">
-            <Activity className="w-6 h-6 mr-2 animate-pulse" /> System_Overview
+            <Activity className="w-6 h-6 mr-2 animate-pulse" /> Visão_Geral_Sistema
         </h1>
       </div>
 
@@ -54,7 +54,7 @@ const Dashboard: React.FC = () => {
         <div className="bg-zinc-900 p-6 rounded-sm border border-green-900/50 hover:border-green-500 transition-colors group">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] text-green-700 uppercase tracking-widest mb-1 group-hover:text-green-400">Total Revenue</p>
+              <p className="text-[10px] text-green-700 uppercase tracking-widest mb-1 group-hover:text-green-400">Receita Total</p>
               <h3 className="text-2xl font-bold text-white">R$ {totalRevenue.toFixed(2)}</h3>
             </div>
             <div className="p-3 bg-black border border-green-900 rounded-sm text-green-500 group-hover:text-green-400 group-hover:shadow-[0_0_10px_rgba(34,197,94,0.3)] transition-all">
@@ -65,7 +65,7 @@ const Dashboard: React.FC = () => {
         <div className="bg-zinc-900 p-6 rounded-sm border border-green-900/50 hover:border-green-500 transition-colors group">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] text-green-700 uppercase tracking-widest mb-1 group-hover:text-green-400">Transactions</p>
+              <p className="text-[10px] text-green-700 uppercase tracking-widest mb-1 group-hover:text-green-400">Transações</p>
               <h3 className="text-2xl font-bold text-white">{totalSalesCount}</h3>
             </div>
             <div className="p-3 bg-black border border-green-900 rounded-sm text-green-500 group-hover:text-green-400 group-hover:shadow-[0_0_10px_rgba(34,197,94,0.3)] transition-all">
@@ -76,7 +76,7 @@ const Dashboard: React.FC = () => {
         <div className="bg-zinc-900 p-6 rounded-sm border border-green-900/50 hover:border-green-500 transition-colors group">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] text-green-700 uppercase tracking-widest mb-1 group-hover:text-green-400">Units Sold</p>
+              <p className="text-[10px] text-green-700 uppercase tracking-widest mb-1 group-hover:text-green-400">Unidades Vendidas</p>
               <h3 className="text-2xl font-bold text-white">{totalItemsSold}</h3>
             </div>
             <div className="p-3 bg-black border border-green-900 rounded-sm text-green-500 group-hover:text-green-400 group-hover:shadow-[0_0_10px_rgba(34,197,94,0.3)] transition-all">
@@ -87,7 +87,7 @@ const Dashboard: React.FC = () => {
         <div className="bg-zinc-900 p-6 rounded-sm border border-red-900/30 hover:border-red-500 transition-colors group">
            <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] text-red-800 uppercase tracking-widest mb-1 group-hover:text-red-500">Stock Alerts</p>
+              <p className="text-[10px] text-red-800 uppercase tracking-widest mb-1 group-hover:text-red-500">Alertas de Estoque</p>
               <h3 className="text-2xl font-bold text-red-500">{lowStockItems.length}</h3>
             </div>
             <div className="p-3 bg-black border border-red-900 rounded-sm text-red-600 group-hover:text-red-500 group-hover:shadow-[0_0_10px_rgba(239,68,68,0.3)] transition-all">
@@ -102,7 +102,7 @@ const Dashboard: React.FC = () => {
         <div className="bg-zinc-900 p-6 rounded-sm border border-green-900/50">
           <h3 className="text-sm font-bold text-green-400 mb-6 uppercase tracking-wider flex items-center">
              <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-             Revenue_By_Node
+             Receita_Por_Unidade
           </h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -125,7 +125,7 @@ const Dashboard: React.FC = () => {
         <div className="bg-zinc-900 p-6 rounded-sm border border-green-900/50">
           <h3 className="text-sm font-bold text-green-400 mb-6 uppercase tracking-wider flex items-center">
              <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-             Top_Performing_Items
+             Produtos_Mais_Vendidos
           </h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -156,22 +156,22 @@ const Dashboard: React.FC = () => {
       <div className="bg-zinc-900 p-6 rounded-sm border border-green-900/50">
         <h3 className="text-sm font-bold text-red-500 mb-4 flex items-center uppercase tracking-wider">
             <AlertTriangle className="w-4 h-4 mr-2" />
-            Critical_Stock_Levels
+            Níveis_Críticos_Estoque
         </h3>
         <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
                 <thead>
                     <tr className="border-b border-green-900/30 text-green-700 text-xs uppercase">
                         <th className="py-3 px-2">Ref_Img</th>
-                        <th className="py-3 px-2">Item_Name</th>
-                        <th className="py-3 px-2">Node_Location</th>
-                        <th className="py-3 px-2">Current_Qty</th>
+                        <th className="py-3 px-2">Nome_Item</th>
+                        <th className="py-3 px-2">Unidade_Local</th>
+                        <th className="py-3 px-2">Qtd_Atual</th>
                         <th className="py-3 px-2">Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {lowStockItems.length === 0 ? (
-                        <tr><td colSpan={5} className="py-6 text-center text-zinc-600 text-xs">ALL SYSTEMS NORMAL. NO CRITICAL ALERTS.</td></tr>
+                        <tr><td colSpan={5} className="py-6 text-center text-zinc-600 text-xs">TODOS OS SISTEMAS NORMAIS. SEM ALERTAS.</td></tr>
                     ) : (
                         lowStockItems.map((item, idx) => (
                             <tr key={idx} className="border-b border-green-900/10 hover:bg-green-900/5 transition-colors">
@@ -187,7 +187,7 @@ const Dashboard: React.FC = () => {
                                 <td className="py-2 px-2 font-medium text-zinc-300 text-xs">{item.product.name}</td>
                                 <td className="py-2 px-2 text-zinc-500 text-xs">{item.store.name}</td>
                                 <td className="py-2 px-2 text-red-500 font-bold font-mono">{item.qty}</td>
-                                <td className="py-2 px-2"><span className="px-2 py-0.5 text-[10px] bg-red-900/20 border border-red-900 text-red-500 rounded-sm">CRITICAL</span></td>
+                                <td className="py-2 px-2"><span className="px-2 py-0.5 text-[10px] bg-red-900/20 border border-red-900 text-red-500 rounded-sm">CRÍTICO</span></td>
                             </tr>
                         ))
                     )}

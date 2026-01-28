@@ -45,8 +45,8 @@ const OrdersManager: React.FC<OrdersManagerProps> = ({ currentUser }) => {
     <div className="space-y-6 h-[calc(100vh-8rem)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-            <h1 className="text-2xl font-bold text-green-500 uppercase tracking-widest font-mono">Incoming_Orders</h1>
-            <p className="text-zinc-500 text-xs font-mono">Manage client solicitations and fulfillment.</p>
+            <h1 className="text-2xl font-bold text-green-500 uppercase tracking-widest font-mono">Pedidos_Recebidos</h1>
+            <p className="text-zinc-500 text-xs font-mono">Gerenciar solicitações de clientes e entregas.</p>
         </div>
         
         {/* Status Filters */}
@@ -55,13 +55,13 @@ const OrdersManager: React.FC<OrdersManagerProps> = ({ currentUser }) => {
                 onClick={() => setFilterStatus('ALL')}
                 className={`px-4 py-1 rounded-sm text-xs font-bold font-mono transition-colors ${filterStatus === 'ALL' ? 'bg-green-600 text-black' : 'text-zinc-400 hover:text-white'}`}
             >
-                ALL
+                TODOS
             </button>
             <button 
                 onClick={() => setFilterStatus(SaleStatus.PENDING)}
                 className={`px-4 py-1 rounded-sm text-xs font-bold font-mono transition-colors flex items-center gap-2 ${filterStatus === SaleStatus.PENDING ? 'bg-yellow-600 text-black' : 'text-zinc-400 hover:text-yellow-400'}`}
             >
-                PENDING
+                PENDENTES
                 {sales.filter(s => s.status === SaleStatus.PENDING && (currentUser.role === UserRole.ADMIN || s.storeId === currentUser.storeId)).length > 0 && (
                     <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>
                 )}
@@ -70,7 +70,7 @@ const OrdersManager: React.FC<OrdersManagerProps> = ({ currentUser }) => {
                 onClick={() => setFilterStatus(SaleStatus.COMPLETED)}
                 className={`px-4 py-1 rounded-sm text-xs font-bold font-mono transition-colors ${filterStatus === SaleStatus.COMPLETED ? 'bg-green-600 text-black' : 'text-zinc-400 hover:text-green-400'}`}
             >
-                COMPLETED
+                CONCLUÍDOS
             </button>
         </div>
       </div>
@@ -79,7 +79,7 @@ const OrdersManager: React.FC<OrdersManagerProps> = ({ currentUser }) => {
         {filteredSales.length === 0 ? (
             <div className="h-64 flex flex-col items-center justify-center text-zinc-700 font-mono border border-dashed border-green-900/30 rounded-sm">
                 <ListFilter className="w-12 h-12 mb-3 opacity-20" />
-                <p>NO ORDERS FOUND IN QUEUE.</p>
+                <p>NENHUM PEDIDO NA FILA.</p>
             </div>
         ) : (
             filteredSales.map(sale => {
@@ -90,7 +90,7 @@ const OrdersManager: React.FC<OrdersManagerProps> = ({ currentUser }) => {
                             <div className="flex flex-col gap-1">
                                 <div className="flex items-center gap-3">
                                     <span className={`px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase tracking-wider border ${getStatusColor(sale.status)}`}>
-                                        {sale.status}
+                                        {sale.status === 'PENDING' ? 'PENDENTE' : sale.status === 'COMPLETED' ? 'CONCLUÍDO' : 'CANCELADO'}
                                     </span>
                                     <span className="font-mono text-xs text-zinc-500">ID: {sale.id.slice(-6)}</span>
                                     <span className="font-mono text-xs text-zinc-400 flex items-center gap-1">
@@ -108,7 +108,7 @@ const OrdersManager: React.FC<OrdersManagerProps> = ({ currentUser }) => {
                             
                             <div className="flex flex-col items-end justify-center">
                                 <span className="font-bold text-xl text-white font-mono">R$ {sale.totalAmount.toFixed(2)}</span>
-                                <span className="text-[10px] text-zinc-500 uppercase">{sale.items.length} Items</span>
+                                <span className="text-[10px] text-zinc-500 uppercase">{sale.items.length} Itens</span>
                             </div>
                         </div>
 
@@ -119,7 +119,7 @@ const OrdersManager: React.FC<OrdersManagerProps> = ({ currentUser }) => {
                                         <Package className="w-4 h-4 text-green-800" />
                                         <div>
                                             <p className="font-bold text-xs text-zinc-300 font-mono uppercase">{item.productName}</p>
-                                            <p className="text-[10px] text-zinc-600 font-mono">{item.quantity} units</p>
+                                            <p className="text-[10px] text-zinc-600 font-mono">{item.quantity} un.</p>
                                         </div>
                                     </div>
                                     <span className="font-mono text-xs text-green-600">R$ {item.total.toFixed(2)}</span>
@@ -133,13 +133,13 @@ const OrdersManager: React.FC<OrdersManagerProps> = ({ currentUser }) => {
                                     onClick={() => handleStatusChange(sale.id, SaleStatus.CANCELLED)}
                                     className="px-4 py-2 bg-red-900/20 text-red-500 border border-red-900 hover:bg-red-900/50 rounded-sm font-bold text-xs uppercase flex items-center gap-2"
                                 >
-                                    <XCircle className="w-4 h-4" /> Cancel / Restock
+                                    <XCircle className="w-4 h-4" /> Cancelar / Estornar
                                 </button>
                                 <button 
                                     onClick={() => handleStatusChange(sale.id, SaleStatus.COMPLETED)}
                                     className="px-4 py-2 bg-green-600 text-black hover:bg-green-500 rounded-sm font-bold text-xs uppercase flex items-center gap-2 shadow-lg hover:shadow-green-500/20 transition-all"
                                 >
-                                    <CheckCircle className="w-4 h-4" /> Mark as Delivered
+                                    <CheckCircle className="w-4 h-4" /> Marcar Entregue
                                 </button>
                             </div>
                         )}

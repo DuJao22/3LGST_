@@ -18,7 +18,7 @@ const SalesTerminal: React.FC<SalesTerminalProps> = ({ currentUser }) => {
   const currentStore = stores.find(s => s.id === currentUser.storeId);
 
   if (!currentStore) {
-    return <div className="p-4 text-red-500 font-mono">CRITICAL ERROR: OPERATOR_NODE_UNLINKED. CONTACT ADMIN.</div>;
+    return <div className="p-4 text-red-500 font-mono">ERRO CRÍTICO: NÓ_OPERADOR_DESVINCULADO. CONTATE ADMIN.</div>;
   }
 
   const filteredProducts = products.filter(p => 
@@ -33,7 +33,7 @@ const SalesTerminal: React.FC<SalesTerminalProps> = ({ currentUser }) => {
     const currentQtyInCart = inCart ? inCart.quantity : 0;
 
     if (currentQtyInCart + 1 > stockQty) {
-      setErrorMsg(`INSUFFICIENT RESOURCES: ${product.name}`);
+      setErrorMsg(`RECURSOS INSUFICIENTES: ${product.name}`);
       setTimeout(() => setErrorMsg(''), 3000);
       return;
     }
@@ -65,7 +65,7 @@ const SalesTerminal: React.FC<SalesTerminalProps> = ({ currentUser }) => {
             const newQty = Math.max(1, item.quantity + delta);
             const stockQty = getStock(productId, currentStore.id);
             if (newQty > stockQty) {
-                setErrorMsg(`RESOURCE LIMIT EXCEEDED.`);
+                setErrorMsg(`LIMITE DE RECURSO EXCEDIDO.`);
                 setTimeout(() => setErrorMsg(''), 2000);
                 return item;
             }
@@ -79,9 +79,9 @@ const SalesTerminal: React.FC<SalesTerminalProps> = ({ currentUser }) => {
     if (cart.length === 0) return;
 
     // POS Sales are always COMPLETED immediately
-    processSale(currentStore.id, currentUser.id, currentUser.name, cart, customerName || 'Walk-in_Subject', SaleStatus.COMPLETED);
+    processSale(currentStore.id, currentUser.id, currentUser.name, cart, customerName || 'Cliente_Balcão', SaleStatus.COMPLETED);
     
-    setSuccessMsg('TRANSACTION COMMITTED.');
+    setSuccessMsg('TRANSAÇÃO EXECUTADA.');
     setCart([]);
     setCustomerName('');
     setTimeout(() => setSuccessMsg(''), 3000);
@@ -94,12 +94,12 @@ const SalesTerminal: React.FC<SalesTerminalProps> = ({ currentUser }) => {
       {/* Left: Product Selection */}
       <div className="flex-1 bg-zinc-900 rounded-sm border border-green-900/30 flex flex-col overflow-hidden">
         <div className="p-4 border-b border-green-900/50 bg-black">
-          <h2 className="text-lg font-bold text-green-500 mb-2 uppercase tracking-widest font-mono">Catalog: {currentStore.name}</h2>
+          <h2 className="text-lg font-bold text-green-500 mb-2 uppercase tracking-widest font-mono">Catálogo: {currentStore.name}</h2>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-700 w-5 h-5" />
             <input
               type="text"
-              placeholder="SEARCH_QUERY..."
+              placeholder="BUSCAR_ITEM..."
               className="w-full bg-zinc-900 border border-green-900 rounded-sm pl-10 pr-4 py-2 text-green-400 focus:border-green-500 focus:outline-none font-mono placeholder-zinc-700"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -125,7 +125,7 @@ const SalesTerminal: React.FC<SalesTerminalProps> = ({ currentUser }) => {
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-bold text-white font-mono">R$ {product.price.toFixed(2)}</span>
                     <span className={`text-[10px] px-2 py-0.5 rounded-sm border ${stock > 0 ? 'bg-green-900/20 text-green-500 border-green-900' : 'bg-red-900/20 text-red-500 border-red-900'}`}>
-                      QTY: {stock}
+                      QTD: {stock}
                     </span>
                   </div>
                 </div>
@@ -138,7 +138,7 @@ const SalesTerminal: React.FC<SalesTerminalProps> = ({ currentUser }) => {
                     : 'bg-black text-zinc-700 cursor-not-allowed border border-zinc-800'
                   }`}
                 >
-                  <Plus className="w-4 h-4 mr-1" /> Append
+                  <Plus className="w-4 h-4 mr-1" /> Adicionar
                 </button>
               </div>
             );
@@ -150,7 +150,7 @@ const SalesTerminal: React.FC<SalesTerminalProps> = ({ currentUser }) => {
       <div className="w-full lg:w-96 bg-zinc-900 rounded-sm border border-green-900/30 flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.5)]">
         <div className="p-4 border-b border-green-900/50 bg-black">
           <h2 className="text-lg font-bold text-green-500 flex items-center uppercase tracking-widest font-mono">
-            <Terminal className="mr-2 w-5 h-5" /> Active_Buffer
+            <Terminal className="mr-2 w-5 h-5" /> Buffer_Ativo
           </h2>
         </div>
 
@@ -169,7 +169,7 @@ const SalesTerminal: React.FC<SalesTerminalProps> = ({ currentUser }) => {
           {cart.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-zinc-700 font-mono">
               <Code className="w-12 h-12 mb-2 opacity-20" />
-              <p className="text-xs">[BUFFER EMPTY]</p>
+              <p className="text-xs">[BUFFER VAZIO]</p>
             </div>
           ) : (
             cart.map(item => (
@@ -187,7 +187,7 @@ const SalesTerminal: React.FC<SalesTerminalProps> = ({ currentUser }) => {
                   <div className="text-right">
                       <p className="font-bold text-sm text-white font-mono">R$ {item.total.toFixed(2)}</p>
                       <button onClick={() => removeFromCart(item.productId)} className="text-[10px] text-red-700 hover:text-red-500 font-mono uppercase">
-                        [DELETE]
+                        [REMOVER]
                       </button>
                   </div>
                 </div>
@@ -198,17 +198,17 @@ const SalesTerminal: React.FC<SalesTerminalProps> = ({ currentUser }) => {
 
         <div className="p-4 bg-black border-t border-green-900/50">
           <div className="mb-4">
-             <label className="block text-[10px] font-bold text-green-700 mb-1 uppercase tracking-widest">Subject ID (Optional)</label>
+             <label className="block text-[10px] font-bold text-green-700 mb-1 uppercase tracking-widest">ID do Cliente (Opcional)</label>
              <input 
                 type="text" 
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 className="w-full bg-zinc-900 border border-green-900 rounded-sm px-2 py-1 text-sm text-green-400 outline-none font-mono placeholder-zinc-700"
-                placeholder="ANONYMOUS"
+                placeholder="ANÔNIMO"
              />
           </div>
           <div className="flex justify-between items-center mb-4">
-            <span className="text-zinc-500 text-xs uppercase font-mono">Total_Value</span>
+            <span className="text-zinc-500 text-xs uppercase font-mono">Valor_Total</span>
             <span className="text-2xl font-bold text-green-500 font-mono">R$ {cartTotal.toFixed(2)}</span>
           </div>
           <button
@@ -220,7 +220,7 @@ const SalesTerminal: React.FC<SalesTerminalProps> = ({ currentUser }) => {
                 : 'bg-zinc-800 text-zinc-600 border border-zinc-700 cursor-not-allowed'
             }`}
           >
-            Execute_Transaction
+            Executar_Transação
           </button>
         </div>
       </div>

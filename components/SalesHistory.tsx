@@ -18,9 +18,9 @@ const SalesHistory: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center border-b border-green-900/30 pb-4">
-        <h1 className="text-2xl font-bold text-green-500 uppercase tracking-widest font-mono">Transaction_Logs</h1>
+        <h1 className="text-2xl font-bold text-green-500 uppercase tracking-widest font-mono">Logs_Transacionais</h1>
         <div className="text-xs text-zinc-500 font-mono">
-            LOG_ENTRIES: {sortedSales.length}
+            REGISTROS_LOG: {sortedSales.length}
         </div>
       </div>
 
@@ -28,11 +28,11 @@ const SalesHistory: React.FC = () => {
         {sortedSales.length === 0 ? (
             <div className="text-center p-12 text-zinc-700 bg-zinc-900 rounded-sm border border-green-900/30 font-mono">
                 <ShoppingCart className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                <p>NO DATA LOGGED.</p>
+                <p>NENHUM DADO REGISTRADO.</p>
             </div>
         ) : (
             sortedSales.map(sale => {
-                const storeName = stores.find(s => s.id === sale.storeId)?.name || 'UNKNOWN_NODE';
+                const storeName = stores.find(s => s.id === sale.storeId)?.name || 'NÓ_DESCONHECIDO';
                 return (
                     <div key={sale.id} className="bg-zinc-900 rounded-sm border border-green-900/30 overflow-hidden hover:border-green-500 transition-colors">
                         <div className="bg-black p-4 border-b border-green-900/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
@@ -58,7 +58,7 @@ const SalesHistory: React.FC = () => {
                             </div>
                         </div>
                         <div className="p-4">
-                            <div className="mb-2 text-[10px] font-bold text-green-800 uppercase tracking-widest">Manifest</div>
+                            <div className="mb-2 text-[10px] font-bold text-green-800 uppercase tracking-widest">Manifesto</div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                 {sale.items.map((item, idx) => (
                                     <div key={idx} className="flex justify-between items-center p-2 rounded-sm bg-black border border-green-900/30">
@@ -72,7 +72,7 @@ const SalesHistory: React.FC = () => {
                             </div>
                             {sale.customerName && (
                                 <div className="mt-3 text-[10px] text-zinc-600 font-mono border-t border-green-900/20 pt-2">
-                                    SUBJECT: <span className="text-zinc-400 uppercase">{sale.customerName}</span>
+                                    SUJEITO: <span className="text-zinc-400 uppercase">{sale.customerName}</span>
                                 </div>
                             )}
                         </div>

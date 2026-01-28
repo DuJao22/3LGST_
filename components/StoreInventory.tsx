@@ -13,7 +13,7 @@ const StoreInventory: React.FC<StoreInventoryProps> = ({ user }) => {
   
   const currentStore = stores.find(s => s.id === user.storeId);
 
-  if (!currentStore) return <div className="p-4 text-red-500 font-mono">FATAL ERROR: OPERATOR_UNLINKED.</div>;
+  if (!currentStore) return <div className="p-4 text-red-500 font-mono">ERRO FATAL: OPERADOR_SEM_VÍNCULO.</div>;
 
   const filteredProducts = products.filter(p => 
     p.active && p.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -33,14 +33,14 @@ const StoreInventory: React.FC<StoreInventoryProps> = ({ user }) => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 className="text-2xl font-bold text-green-500 uppercase tracking-wider font-mono">Node_Storage: {currentStore.name}</h1>
-            <p className="text-zinc-500 text-xs font-mono">Local inventory management subsystem.</p>
+            <h1 className="text-2xl font-bold text-green-500 uppercase tracking-wider font-mono">Armazenamento: {currentStore.name}</h1>
+            <p className="text-zinc-500 text-xs font-mono">Subsistema de gestão de inventário local.</p>
         </div>
         <div className="relative w-full md:w-64">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-700 w-5 h-5" />
             <input
                 type="text"
-                placeholder="FILTER_ASSETS..."
+                placeholder="FILTRAR_ATIVOS..."
                 className="w-full bg-zinc-900 border border-green-900 rounded-sm pl-10 pr-4 py-2 text-green-400 focus:border-green-500 outline-none font-mono placeholder-zinc-700"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -52,9 +52,9 @@ const StoreInventory: React.FC<StoreInventoryProps> = ({ user }) => {
         <table className="w-full text-left border-collapse">
             <thead className="bg-black border-b border-green-900">
                 <tr>
-                    <th className="p-4 font-mono text-xs text-green-700 uppercase">Asset_ID</th>
-                    <th className="p-4 font-mono text-xs text-green-700 uppercase text-center">Current_Level</th>
-                    <th className="p-4 font-mono text-xs text-green-700 uppercase text-center">Quick_Adjust</th>
+                    <th className="p-4 font-mono text-xs text-green-700 uppercase">ID_Ativo</th>
+                    <th className="p-4 font-mono text-xs text-green-700 uppercase text-center">Nível_Atual</th>
+                    <th className="p-4 font-mono text-xs text-green-700 uppercase text-center">Ajuste_Rápido</th>
                 </tr>
             </thead>
             <tbody>

@@ -51,12 +51,12 @@ const ProductsManager: React.FC = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-green-500 uppercase tracking-wider">Product_Database</h1>
+        <h1 className="text-2xl font-bold text-green-500 uppercase tracking-wider">Banco_de_Dados_Produtos</h1>
         <button
           onClick={() => handleOpenModal()}
           className="bg-green-900/30 text-green-400 border border-green-600 px-4 py-2 rounded-sm hover:bg-green-500 hover:text-black transition-all flex items-center font-mono text-xs uppercase"
         >
-          <Plus className="w-4 h-4 mr-2" /> NEW_ENTRY
+          <Plus className="w-4 h-4 mr-2" /> NOVA_ENTRADA
         </button>
       </div>
 
@@ -65,12 +65,12 @@ const ProductsManager: React.FC = () => {
           <thead className="bg-black border-b border-green-900">
             <tr>
               <th className="p-4 font-mono text-xs text-green-700 uppercase w-20">Ref</th>
-              <th className="p-4 font-mono text-xs text-green-700 uppercase">Item_Name</th>
-              <th className="p-4 font-mono text-xs text-green-700 uppercase">Type</th>
-              <th className="p-4 font-mono text-xs text-green-700 uppercase">Cost</th>
-              <th className="p-4 font-mono text-xs text-green-700 uppercase">Unit</th>
-              <th className="p-4 font-mono text-xs text-green-700 uppercase">State</th>
-              <th className="p-4 font-mono text-xs text-green-700 uppercase text-right">Cmds</th>
+              <th className="p-4 font-mono text-xs text-green-700 uppercase">Nome_Item</th>
+              <th className="p-4 font-mono text-xs text-green-700 uppercase">Tipo</th>
+              <th className="p-4 font-mono text-xs text-green-700 uppercase">Custo</th>
+              <th className="p-4 font-mono text-xs text-green-700 uppercase">Unidade</th>
+              <th className="p-4 font-mono text-xs text-green-700 uppercase">Estado</th>
+              <th className="p-4 font-mono text-xs text-green-700 uppercase text-right">Comandos</th>
             </tr>
           </thead>
           <tbody>
@@ -112,13 +112,13 @@ const ProductsManager: React.FC = () => {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-zinc-900 border border-green-500 rounded-sm shadow-[0_0_30px_rgba(34,197,94,0.2)] max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div className="flex justify-between items-center mb-4 border-b border-green-900/50 pb-2">
-               <h2 className="text-xl font-bold text-green-500 uppercase font-mono">{editingId ? 'Modify Entry' : 'Create Entry'}</h2>
+               <h2 className="text-xl font-bold text-green-500 uppercase font-mono">{editingId ? 'Modificar Item' : 'Criar Item'}</h2>
                <button onClick={() => setIsModalOpen(false)}><X className="w-5 h-5 text-zinc-500 hover:text-red-500" /></button>
             </div>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Item Name</label>
+                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Nome do Item</label>
                 <input
                   type="text"
                   value={formData.name}
@@ -129,7 +129,7 @@ const ProductsManager: React.FC = () => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Category</label>
+                  <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Categoria</label>
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value as ProductCategory })}
@@ -139,7 +139,7 @@ const ProductsManager: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                   <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Unit / Weight</label>
+                   <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Unidade / Peso</label>
                    <input
                     type="text"
                     value={formData.weightUnit}
@@ -150,7 +150,7 @@ const ProductsManager: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Unit Cost (R$)</label>
+                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Preço Unitário (R$)</label>
                 <input
                   type="number"
                   step="0.01"
@@ -161,7 +161,7 @@ const ProductsManager: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Image Resource URL</label>
+                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">URL da Imagem</label>
                 <div className="flex gap-2 items-start">
                     <input
                       type="text"
@@ -179,7 +179,7 @@ const ProductsManager: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Metadata Description</label>
+                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Descrição (Metadados)</label>
                 <textarea
                   rows={3}
                   value={formData.description}
@@ -195,12 +195,12 @@ const ProductsManager: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                   className="w-4 h-4 text-green-600 rounded-sm bg-black border-green-900 focus:ring-green-500"
                 />
-                <label className="ml-2 text-xs font-bold text-green-700 uppercase">Item Active</label>
+                <label className="ml-2 text-xs font-bold text-green-700 uppercase">Item Ativo</label>
               </div>
 
               <div className="flex justify-end gap-2 mt-6">
-                <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-zinc-500 hover:text-white rounded-sm font-mono text-xs uppercase">Abort</button>
-                <button onClick={handleSave} className="px-4 py-2 bg-green-700 text-black rounded-sm hover:bg-green-500 font-bold uppercase tracking-wider">Commit</button>
+                <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-zinc-500 hover:text-white rounded-sm font-mono text-xs uppercase">Cancelar</button>
+                <button onClick={handleSave} className="px-4 py-2 bg-green-700 text-black rounded-sm hover:bg-green-500 font-bold uppercase tracking-wider">Salvar</button>
               </div>
             </div>
           </div>

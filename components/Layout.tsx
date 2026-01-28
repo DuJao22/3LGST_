@@ -61,13 +61,13 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children, currentPage, 
           
           {user.role === UserRole.ADMIN && (
             <>
-              <MenuLink page="dashboard" icon={LayoutDashboard} label="Dashboard" />
+              <MenuLink page="dashboard" icon={LayoutDashboard} label="Visão Geral" />
               <MenuLink page="orders" icon={ClipboardList} label="Gestão de Pedidos" />
               <MenuLink page="inventory" icon={Package} label="Estoque Global" />
               <MenuLink page="products" icon={Sprout} label="Produtos / Strains" />
-              <MenuLink page="stores" icon={StoreIcon} label="Unidades" />
-              <MenuLink page="users" icon={Users} label="Equipe" />
-              <MenuLink page="sales_history" icon={ShoppingCart} label="Vendas" />
+              <MenuLink page="stores" icon={StoreIcon} label="Unidades / Lojas" />
+              <MenuLink page="users" icon={Users} label="Equipe & Acessos" />
+              <MenuLink page="sales_history" icon={ShoppingCart} label="Histórico de Vendas" />
             </>
           )}
 
@@ -75,7 +75,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children, currentPage, 
             <>
               <MenuLink page="pos" icon={ShoppingCart} label="PDV - Balcão" />
               <MenuLink page="orders" icon={ClipboardList} label="Pedidos (Solicitações)" />
-              <MenuLink page="store_inventory" icon={Package} label="Estoque Local" />
+              <MenuLink page="store_inventory" icon={Package} label="Meu Estoque" />
             </>
           )}
 
@@ -92,7 +92,9 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children, currentPage, 
               </div>
               <div className="text-sm">
                 <p className="font-bold text-lime-100">{user.name}</p>
-                <p className="text-[10px] text-lime-300/70 uppercase font-medium">{user.role}</p>
+                <p className="text-[10px] text-lime-300/70 uppercase font-medium">
+                  {user.role === 'ADMIN' ? 'ADMINISTRADOR' : user.role === 'SELLER' ? 'VENDEDOR' : 'CLIENTE'}
+                </p>
               </div>
             </div>
             <button onClick={onLogout} className="text-red-400/70 hover:text-red-400 transition-colors p-2 hover:bg-red-900/20 rounded-lg">

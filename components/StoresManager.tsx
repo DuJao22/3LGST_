@@ -22,12 +22,12 @@ const StoresManager: React.FC = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-green-500 uppercase tracking-wider">Node_Management</h1>
+        <h1 className="text-2xl font-bold text-green-500 uppercase tracking-wider">Gestão_de_Unidades</h1>
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-green-900/30 text-green-400 border border-green-600 px-4 py-2 rounded-sm hover:bg-green-500 hover:text-black transition-all flex items-center font-mono text-xs uppercase"
         >
-          <Plus className="w-4 h-4 mr-2" /> ADD_NODE
+          <Plus className="w-4 h-4 mr-2" /> ADD_UNIDADE
         </button>
       </div>
 
@@ -54,7 +54,7 @@ const StoresManager: React.FC = () => {
                 onClick={() => deleteStore(store.id)}
                 className="text-red-900 hover:text-red-500 flex items-center text-xs font-bold uppercase tracking-wider transition-colors"
               >
-                <Trash2 className="w-4 h-4 mr-1" /> Terminate_Node
+                <Trash2 className="w-4 h-4 mr-1" /> Encerrar_Nó
               </button>
             </div>
           </div>
@@ -65,35 +65,35 @@ const StoresManager: React.FC = () => {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-zinc-900 border border-green-500 rounded-sm shadow-[0_0_30px_rgba(34,197,94,0.2)] max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-4 border-b border-green-900/50 pb-2">
-               <h2 className="text-xl font-bold text-green-500 uppercase font-mono">Initialize New Node</h2>
+               <h2 className="text-xl font-bold text-green-500 uppercase font-mono">Nova Unidade</h2>
                <button onClick={() => setIsModalOpen(false)}><X className="w-5 h-5 text-zinc-500 hover:text-red-500" /></button>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Node Identifier (Name)</label>
+                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Identificador (Nome)</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full bg-black border border-green-900 rounded-sm p-2 text-green-400 focus:border-green-500 outline-none font-mono"
-                  placeholder="EX: CENTRAL HUB"
+                  placeholder="EX: MATRIZ CENTRAL"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Physical Coordinates</label>
+                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Coordenadas Físicas (Endereço)</label>
                 <input
                   type="text"
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   className="w-full bg-black border border-green-900 rounded-sm p-2 text-green-400 focus:border-green-500 outline-none font-mono"
-                  placeholder="EX: SECTOR 7"
+                  placeholder="EX: RUA SETOR 7"
                 />
               </div>
               <button 
                 onClick={handleSave} 
                 className="w-full bg-green-700 text-black py-2 rounded-sm hover:bg-green-500 font-bold uppercase tracking-wider mt-4"
               >
-                Deploy Node
+                Implantar Unidade
               </button>
             </div>
           </div>
