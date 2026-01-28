@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
 import { Product, ProductCategory } from '../types';
-import { Edit2, Trash2, Plus, Sparkles, X, Image as ImageIcon } from 'lucide-react';
-import { generateProductDescription } from '../services/geminiService';
+import { Edit2, Trash2, Plus, X, Image as ImageIcon } from 'lucide-react';
 
 const ProductsManager: React.FC = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useData();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [generatingDesc, setGeneratingDesc] = useState(false);
 
   const [formData, setFormData] = useState<Partial<Product>>({
     name: '',
@@ -48,17 +46,6 @@ const ProductsManager: React.FC = () => {
       addProduct({ ...formData, id: `prod_${Date.now()}` } as Product);
     }
     setIsModalOpen(false);
-  };
-
-  const handleGenerateDescription = async () => {
-    if (!formData.name || !formData.category) {
-        alert("Preencha o nome e categoria primeiro.");
-        return;
-    }
-    setGeneratingDesc(true);
-    const desc = await generateProductDescription(formData.name, formData.category);
-    setFormData(prev => ({ ...prev, description: desc }));
-    setGeneratingDesc(false);
   };
 
   return (
@@ -192,16 +179,7 @@ const ProductsManager: React.FC = () => {
               </div>
 
               <div>
-                <div className="flex justify-between items-center mb-1">
-                    <label className="block text-sm font-medium text-stone-700">Descrição</label>
-                    <button 
-                        onClick={handleGenerateDescription}
-                        disabled={generatingDesc}
-                        className="text-xs flex items-center text-indigo-600 hover:text-indigo-800 font-semibold"
-                    >
-                        <Sparkles className="w-3 h-3 mr-1" /> {generatingDesc ? 'Gerando...' : 'Gerar com IA'}
-                    </button>
-                </div>
+                <label className="block text-sm font-medium text-stone-700 mb-1">Descrição</label>
                 <textarea
                   rows={3}
                   value={formData.description}

@@ -25,10 +25,6 @@ Se você está vendo um campo vermelho escrito **Start Command** e ele é **Obri
 2. **Configuração (IMPORTANTE: Copie exatamente assim):**
    *   **Build Command:** `npm install && npm run build`
    *   **Publish Directory:** `dist`
-   *   *(Não existe campo Start Command aqui)*
-
-3. **Variáveis (API Key):**
-   *   Vá em "Environment" e adicione `API_KEY`.
 
 ---
 
@@ -39,10 +35,6 @@ Se você não quiser voltar e preferir continuar na tela de "Web Service":
 1. **Configuração (IMPORTANTE: Copie exatamente assim):**
    *   **Build Command:** `npm install && npm run build`
    *   **Start Command:** `npm run start` 
-   *   *(Adicionamos este comando especificamente para funcionar neste modo)*
-
-2. **Variáveis (API Key):**
-   *   Adicione `API_KEY` nas variáveis de ambiente.
 
 *Nota: O modo Web Service pode desligar sozinho no plano gratuito após inatividade, enquanto o Static Site permanece sempre disponível.*
 
@@ -55,12 +47,7 @@ Se você não quiser voltar e preferir continuar na tela de "Web Service":
    npm install
    ```
 
-2. Crie um arquivo `.env` na raiz e adicione sua chave:
-   ```
-   API_KEY=sua_chave_aqui
-   ```
-
-3. Rode o projeto:
+2. Rode o projeto:
    ```bash
    npm run dev
    ```
@@ -74,7 +61,6 @@ Se você não quiser voltar e preferir continuar na tela de "Web Service":
 *   Tailwind CSS
 *   Recharts (Gráficos)
 *   Lucide React (Ícones)
-*   Google Gemini API (IA)
 
 ---
 

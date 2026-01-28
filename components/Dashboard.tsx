@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useData } from '../context/DataContext';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { AlertTriangle, DollarSign, Package, ShoppingBag, Leaf } from 'lucide-react';
-import { analyzeSalesTrends } from '../services/geminiService';
 
 const COLORS = ['#15803d', '#b45309', '#0f766e', '#be185d'];
 
 const Dashboard: React.FC = () => {
   const { sales, products, stock, stores } = useData();
-  const [analysis, setAnalysis] = useState<string>("");
-  const [loadingAnalysis, setLoadingAnalysis] = useState(false);
 
   // Metrics
   const totalRevenue = sales.reduce((acc, sale) => acc + sale.totalAmount, 0);
@@ -44,35 +41,11 @@ const Dashboard: React.FC = () => {
     })
   ).filter(item => item.qty < lowStockThreshold);
 
-  const handleAnalyze = async () => {
-    setLoadingAnalysis(true);
-    const summary = `Total Revenue: R$${totalRevenue.toFixed(2)}. Top selling product: ${topProducts[0]?.name || 'N/A'}. Total transactions: ${totalSalesCount}.`;
-    const result = await analyzeSalesTrends(summary);
-    setAnalysis(result);
-    setLoadingAnalysis(false);
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <h1 className="text-2xl font-bold text-stone-800">Dashboard Administrativo</h1>
-        <button 
-            onClick={handleAnalyze} 
-            disabled={loadingAnalysis}
-            className="mt-2 md:mt-0 px-4 py-2 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700 disabled:opacity-50"
-        >
-            {loadingAnalysis ? "Analisando com IA..." : "Gerar Insights IA"}
-        </button>
       </div>
-
-      {analysis && (
-        <div className="bg-indigo-50 border border-indigo-200 p-4 rounded-lg text-indigo-800 text-sm">
-            <h3 className="font-bold flex items-center gap-2 mb-1">
-                ✨ Insights do Gemini
-            </h3>
-            <p>{analysis}</p>
-        </div>
-      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
