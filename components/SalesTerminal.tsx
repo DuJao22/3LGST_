@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
-import { User, Product, SaleItem } from '../types';
+import { User, Product, SaleItem, SaleStatus } from '../types';
 import { Search, Plus, Trash2, CheckCircle, AlertCircle, Terminal, Code } from 'lucide-react';
 
 interface SalesTerminalProps {
@@ -78,7 +78,8 @@ const SalesTerminal: React.FC<SalesTerminalProps> = ({ currentUser }) => {
   const handleCheckout = () => {
     if (cart.length === 0) return;
 
-    processSale(currentStore.id, currentUser.id, currentUser.name, cart, customerName || 'Walk-in_Subject');
+    // POS Sales are always COMPLETED immediately
+    processSale(currentStore.id, currentUser.id, currentUser.name, cart, customerName || 'Walk-in_Subject', SaleStatus.COMPLETED);
     
     setSuccessMsg('TRANSACTION COMMITTED.');
     setCart([]);

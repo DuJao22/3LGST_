@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, Store, Product, StockItem, Sale, UserRole, SaleItem } from '../types';
+import { User, Store, Product, StockItem, Sale, UserRole, SaleItem, SaleStatus } from '../types';
 import { INITIAL_USERS, INITIAL_STORES, INITIAL_PRODUCTS, INITIAL_STOCK } from '../constants';
 
 interface DataContextType {
@@ -16,7 +16,8 @@ interface DataContextType {
   updateProduct: (product: Product) => void;
   deleteProduct: (id: string) => void;
   updateStock: (productId: string, storeId: string, quantity: number) => void;
-  processSale: (storeId: string, sellerId: string, sellerName: string, items: SaleItem[], customerName?: string) => void;
+  processSale: (storeId: string, sellerId: string, sellerName: string, items: SaleItem[], customerName?: string, status?: SaleStatus) => void;
+  updateSaleStatus: (saleId: string, newStatus: SaleStatus) => void;
   getStock: (productId: string, storeId: string) => number;
 }
 
@@ -80,7 +81,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return stock.find(s => s.productId === productId && s.storeId === storeId)?.quantity || 0;
   };
 
-  const processSale = (storeId: string, sellerId: string, sellerName: string, items: SaleItem[], customerName?: string) => {
+  const processSale = (storeId: string, sellerId: string, sellerName: string, items: SaleItem[], customerName?: string, status: SaleStatus = SaleStatus.COMPLETED) => {
     const totalAmount = items.reduce((acc, item) => acc + item.total, 0);
     
     const newSale: Sale = {
@@ -91,17 +92,18 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       timestamp: Date.now(),
       items,
       totalAmount,
-      customerName
+      customerName,
+      status
     };
 
-    // Update Stock
+    // Deduct stock immediately (Reservation logic)
+    // If it is pending, stock is reserved. If completed, it stays deducted.
     const newStock = [...stock];
     items.forEach(item => {
       const stockIndex = newStock.findIndex(s => s.productId === item.productId && s.storeId === storeId);
       if (stockIndex >= 0) {
         newStock[stockIndex].quantity -= item.quantity;
       } else {
-        // Should not happen if validation is correct, but safe fallback to negative stock (backorder)
         newStock.push({ productId: item.productId, storeId, quantity: -item.quantity });
       }
     });
@@ -110,12 +112,43 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setSales([...sales, newSale]);
   };
 
+  const updateSaleStatus = (saleId: string, newStatus: SaleStatus) => {
+    const sale = sales.find(s => s.id === saleId);
+    if (!sale) return;
+
+    // Logic for restoring stock if cancelled
+    if (newStatus === SaleStatus.CANCELLED && sale.status !== SaleStatus.CANCELLED) {
+        const newStock = [...stock];
+        sale.items.forEach(item => {
+            const stockIndex = newStock.findIndex(s => s.productId === item.productId && s.storeId === sale.storeId);
+            if (stockIndex >= 0) {
+                newStock[stockIndex].quantity += item.quantity;
+            }
+        });
+        setStock(newStock);
+    }
+
+    // Logic if we were to support re-opening a cancelled order (optional, but good for safety)
+    if (sale.status === SaleStatus.CANCELLED && newStatus !== SaleStatus.CANCELLED) {
+         const newStock = [...stock];
+         sale.items.forEach(item => {
+             const stockIndex = newStock.findIndex(s => s.productId === item.productId && s.storeId === sale.storeId);
+             if (stockIndex >= 0) {
+                 newStock[stockIndex].quantity -= item.quantity;
+             }
+         });
+         setStock(newStock);
+    }
+
+    setSales(sales.map(s => s.id === saleId ? { ...s, status: newStatus } : s));
+  };
+
   return (
     <DataContext.Provider value={{
       users, stores, products, stock, sales,
       addUser, deleteUser, addStore, deleteStore,
       addProduct, updateProduct, deleteProduct,
-      updateStock, processSale, getStock
+      updateStock, processSale, updateSaleStatus, getStock
     }}>
       {children}
     </DataContext.Provider>

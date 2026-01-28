@@ -11,6 +11,12 @@ export enum ProductCategory {
   ACCESSORY = 'Acessório'
 }
 
+export enum SaleStatus {
+  PENDING = 'PENDING',     // Solicitado pelo cliente, aguardando retirada
+  COMPLETED = 'COMPLETED', // Entregue/Finalizado
+  CANCELLED = 'CANCELLED'  // Cancelado (Estorno de estoque)
+}
+
 export interface Store {
   id: string;
   name: string;
@@ -61,6 +67,7 @@ export interface Sale {
   items: SaleItem[];
   totalAmount: number;
   customerName?: string; // Optional for tracking walk-ins vs registered
+  status: SaleStatus;
 }
 
 export interface AuthState {

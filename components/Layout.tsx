@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User, UserRole } from '../types';
-import { LogOut, LayoutDashboard, ShoppingCart, Package, Users, Store as StoreIcon, Menu, Leaf, Power, Sprout } from 'lucide-react';
+import { LogOut, LayoutDashboard, ShoppingCart, Package, Users, Store as StoreIcon, Menu, Leaf, Power, Sprout, ClipboardList } from 'lucide-react';
 
 interface LayoutProps {
   user: User;
@@ -62,6 +62,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children, currentPage, 
           {user.role === UserRole.ADMIN && (
             <>
               <MenuLink page="dashboard" icon={LayoutDashboard} label="Dashboard" />
+              <MenuLink page="orders" icon={ClipboardList} label="Gestão de Pedidos" />
               <MenuLink page="inventory" icon={Package} label="Estoque Global" />
               <MenuLink page="products" icon={Sprout} label="Produtos / Strains" />
               <MenuLink page="stores" icon={StoreIcon} label="Unidades" />
@@ -73,6 +74,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children, currentPage, 
           {user.role === UserRole.SELLER && (
             <>
               <MenuLink page="pos" icon={ShoppingCart} label="PDV - Balcão" />
+              <MenuLink page="orders" icon={ClipboardList} label="Pedidos (Solicitações)" />
               <MenuLink page="store_inventory" icon={Package} label="Estoque Local" />
             </>
           )}

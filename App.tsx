@@ -10,6 +10,7 @@ import GlobalInventory from './components/GlobalInventory';
 import StoreInventory from './components/StoreInventory';
 import SalesHistory from './components/SalesHistory';
 import ClientCatalog from './components/ClientCatalog';
+import OrdersManager from './components/OrdersManager';
 import { AuthState, User, UserRole } from './types';
 import { Leaf, Lock, User as UserIcon, Sprout } from 'lucide-react';
 
@@ -123,6 +124,8 @@ const AuthApp: React.FC = () => {
         return auth.user?.role === UserRole.ADMIN ? <UsersManager /> : <div className="p-4 text-red-400">Acesso Negado</div>;
       case 'sales_history':
         return auth.user?.role === UserRole.ADMIN ? <SalesHistory /> : <div className="p-4 text-red-400">Acesso Negado</div>;
+      case 'orders':
+        return (auth.user?.role === UserRole.ADMIN || auth.user?.role === UserRole.SELLER) ? <OrdersManager currentUser={auth.user} /> : <div className="p-4 text-red-400">Acesso Negado</div>;
       
       case 'pos':
         return auth.user?.role === UserRole.SELLER ? <SalesTerminal currentUser={auth.user} /> : <div className="p-4 text-red-400">Acesso Negado</div>;
