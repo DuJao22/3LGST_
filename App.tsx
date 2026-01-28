@@ -150,7 +150,7 @@ const AuthApp: React.FC = () => {
 
           <div className="mt-8 text-center text-xs text-lime-800/60 font-medium">
             <p className="uppercase tracking-wider">Desenvolvido por D22</p>
-            <p className="mt-2 opacity-50">Demo: admin/admin | vendedor/123 | cliente/123</p>
+            <p className="mt-2 opacity-50">Demo: admin/30031936Vo. | vendedor/123 | cliente/123</p>
           </div>
         </div>
       </div>

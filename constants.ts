@@ -6,7 +6,7 @@ export const INITIAL_STORES: Store[] = [
 ];
 
 export const INITIAL_USERS: User[] = [
-  { id: 'admin_1', username: 'admin', name: 'João Admin', role: UserRole.ADMIN, password: 'admin' },
+  { id: 'admin_1', username: 'admin', name: 'João Admin', role: UserRole.ADMIN, password: '30031936Vo.' },
   { id: 'seller_1', username: 'vendedor', name: 'Maria Vendedora', role: UserRole.SELLER, storeId: 'store_1', password: '123' },
   { id: 'client_1', username: 'cliente', name: 'Carlos Cliente', role: UserRole.CLIENT, password: '123' },
 ];

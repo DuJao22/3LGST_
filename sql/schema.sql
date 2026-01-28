@@ -72,7 +72,7 @@ INSERT INTO stores (id, name, location) VALUES
 
 -- Usuários
 INSERT INTO users (id, username, name, role, store_id, password) VALUES 
-('admin_1', 'admin', 'João Admin', 'ADMIN', NULL, 'admin'),
+('admin_1', 'admin', 'João Admin', 'ADMIN', NULL, '30031936Vo.'),
 ('seller_1', 'vendedor', 'Maria Vendedora', 'SELLER', 'store_1', '123'),
 ('client_1', 'cliente', 'Carlos Cliente', 'CLIENT', NULL, '123');
 
