@@ -4,9 +4,13 @@ import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import SalesTerminal from './components/SalesTerminal';
 import ProductsManager from './components/ProductsManager';
+import StoresManager from './components/StoresManager';
+import UsersManager from './components/UsersManager';
+import GlobalInventory from './components/GlobalInventory';
+import StoreInventory from './components/StoreInventory';
+import SalesHistory from './components/SalesHistory';
 import { AuthState, User, UserRole } from './types';
 import { Leaf, Lock } from 'lucide-react';
-import { INITIAL_USERS } from './constants';
 
 const AuthApp: React.FC = () => {
   const { users } = useData();
@@ -18,13 +22,10 @@ const AuthApp: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // In real app, verify password hash. Here we check plain text from mock data.
-    // Also checking if user exists in the dynamically loaded users from context (which might be updated from localStorage)
     const foundUser = users.find(u => u.username === username && u.password === password);
     
     if (foundUser) {
       setAuth({ user: foundUser, isAuthenticated: true });
-      // Set default page based on role
       if (foundUser.role === UserRole.SELLER) setCurrentPage('pos');
       else if (foundUser.role === UserRole.CLIENT) setCurrentPage('catalog');
       else setCurrentPage('dashboard');
@@ -98,16 +99,26 @@ const AuthApp: React.FC = () => {
     switch (currentPage) {
       case 'dashboard':
         return auth.user?.role === UserRole.ADMIN ? <Dashboard /> : <div className="p-4">Acesso Negado</div>;
+      case 'inventory':
+        return auth.user?.role === UserRole.ADMIN ? <GlobalInventory /> : <div className="p-4">Acesso Negado</div>;
       case 'products':
         return auth.user?.role === UserRole.ADMIN ? <ProductsManager /> : <div className="p-4">Acesso Negado</div>;
+      case 'stores':
+        return auth.user?.role === UserRole.ADMIN ? <StoresManager /> : <div className="p-4">Acesso Negado</div>;
+      case 'users':
+        return auth.user?.role === UserRole.ADMIN ? <UsersManager /> : <div className="p-4">Acesso Negado</div>;
+      case 'sales_history':
+        return auth.user?.role === UserRole.ADMIN ? <SalesHistory /> : <div className="p-4">Acesso Negado</div>;
+      
       case 'pos':
         return auth.user?.role === UserRole.SELLER ? <SalesTerminal currentUser={auth.user} /> : <div className="p-4">Acesso Negado. Apenas vendedores.</div>;
+      case 'store_inventory':
+        return auth.user?.role === UserRole.SELLER ? <StoreInventory user={auth.user} /> : <div className="p-4">Acesso Negado. Apenas vendedores.</div>;
+        
       case 'catalog':
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <h1 className="col-span-full text-2xl font-bold mb-4">Catálogo de Produtos</h1>
-                {/* Simplified Catalog View for Client */}
-                {/* In a real app this would reuse components, but for simplicity: */}
                 {useData().products.filter(p => p.active).map(p => (
                     <div key={p.id} className="bg-white p-4 rounded-xl shadow-sm border border-stone-200">
                         <div className="h-48 bg-stone-100 rounded-lg mb-4 flex items-center justify-center text-stone-400 overflow-hidden">
@@ -123,18 +134,6 @@ const AuthApp: React.FC = () => {
                         <button className="w-full mt-3 bg-stone-800 text-white py-2 rounded text-sm hover:bg-stone-700">Solicitar Compra</button>
                     </div>
                 ))}
-            </div>
-        );
-      case 'inventory':
-      case 'stores':
-      case 'users':
-      case 'sales_history':
-      case 'store_inventory':
-        return (
-            <div className="flex flex-col items-center justify-center h-96 text-stone-400">
-                <Leaf className="w-12 h-12 mb-4 opacity-50" />
-                <h2 className="text-xl font-semibold">Página em Desenvolvimento</h2>
-                <p>O módulo {currentPage} será implementado na próxima versão.</p>
             </div>
         );
       default:
