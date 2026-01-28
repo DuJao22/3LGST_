@@ -9,6 +9,7 @@ import UsersManager from './components/UsersManager';
 import GlobalInventory from './components/GlobalInventory';
 import StoreInventory from './components/StoreInventory';
 import SalesHistory from './components/SalesHistory';
+import ClientCatalog from './components/ClientCatalog';
 import { AuthState, User, UserRole } from './types';
 import { Leaf, Lock } from 'lucide-react';
 
@@ -116,26 +117,7 @@ const AuthApp: React.FC = () => {
         return auth.user?.role === UserRole.SELLER ? <StoreInventory user={auth.user} /> : <div className="p-4">Acesso Negado. Apenas vendedores.</div>;
         
       case 'catalog':
-        return (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <h1 className="col-span-full text-2xl font-bold mb-4">Catálogo de Produtos</h1>
-                {useData().products.filter(p => p.active).map(p => (
-                    <div key={p.id} className="bg-white p-4 rounded-xl shadow-sm border border-stone-200">
-                        <div className="h-48 bg-stone-100 rounded-lg mb-4 flex items-center justify-center text-stone-400 overflow-hidden">
-                            {p.imageUrl ? (
-                                <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" />
-                            ) : (
-                                <Leaf className="w-8 h-8" />
-                            )}
-                        </div>
-                        <h3 className="font-bold text-lg">{p.name}</h3>
-                        <p className="text-sm text-stone-500 mb-2 line-clamp-2">{p.description}</p>
-                        <p className="font-bold text-green-700">R$ {p.price.toFixed(2)}</p>
-                        <button className="w-full mt-3 bg-stone-800 text-white py-2 rounded text-sm hover:bg-stone-700">Solicitar Compra</button>
-                    </div>
-                ))}
-            </div>
-        );
+        return auth.user?.role === UserRole.CLIENT ? <ClientCatalog user={auth.user} /> : <div className="p-4">Acesso Negado. Apenas clientes.</div>;
       default:
         return <div>Página não encontrada</div>;
     }
