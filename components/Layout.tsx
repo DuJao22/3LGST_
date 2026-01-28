@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User, UserRole } from '../types';
-import { LogOut, LayoutDashboard, ShoppingCart, Package, Users, Store as StoreIcon, Menu, Terminal, Power } from 'lucide-react';
+import { LogOut, LayoutDashboard, ShoppingCart, Package, Users, Store as StoreIcon, Menu, Leaf, Power, Sprout } from 'lucide-react';
 
 interface LayoutProps {
   user: User;
@@ -19,100 +19,102 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children, currentPage, 
         onNavigate(page);
         setIsSidebarOpen(false);
       }}
-      className={`flex items-center w-full px-4 py-3 mb-1 text-sm font-bold transition-all border-l-2 ${
+      className={`flex items-center w-full px-6 py-4 mb-2 text-sm font-bold transition-all rounded-r-2xl border-l-4 ${
         currentPage === page
-          ? 'bg-green-900/20 text-green-400 border-green-500 shadow-[0_0_10px_rgba(34,197,94,0.1)]'
-          : 'text-zinc-500 border-transparent hover:text-green-200 hover:bg-zinc-900 hover:border-green-800'
+          ? 'bg-gradient-to-r from-lime-900/30 to-transparent text-lime-400 border-lime-500'
+          : 'text-lime-100/50 border-transparent hover:text-lime-200 hover:bg-green-900/20'
       }`}
     >
-      <Icon className={`w-4 h-4 mr-3 ${currentPage === page ? 'text-green-400' : 'text-zinc-600'}`} />
-      <span className="uppercase tracking-wider">{label}</span>
+      <Icon className={`w-5 h-5 mr-3 ${currentPage === page ? 'text-lime-400' : 'text-lime-700'}`} />
+      <span className="tracking-wide">{label}</span>
     </button>
   );
 
   return (
-    <div className="flex h-screen bg-black overflow-hidden font-mono">
+    <div className="flex h-screen bg-[#022c22] overflow-hidden font-rubik text-lime-100">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-[#022c22]/90 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-zinc-950 border-r border-green-900/50 transform transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0
+        fixed inset-y-0 left-0 z-50 w-72 bg-[#064e3b] border-r border-green-800 shadow-2xl transform transition-transform duration-300 ease-out lg:relative lg:translate-x-0 rounded-r-3xl
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="flex items-center justify-center h-16 border-b border-green-900/50 bg-black">
-          <div className="flex items-center space-x-2 text-green-500 font-bold text-xl tracking-widest">
-             <Terminal className="w-6 h-6" />
+        <div className="flex items-center justify-center h-24 border-b border-green-800/50">
+          <div className="flex items-center space-x-3 text-lime-400 font-black text-2xl tracking-tighter">
+             <div className="bg-lime-500/20 p-2 rounded-lg">
+                <Leaf className="w-6 h-6" />
+             </div>
              <span>3L GESTÃO</span>
           </div>
         </div>
 
-        <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100vh-8rem)]">
-          <div className="text-[10px] font-bold text-green-900 uppercase tracking-widest mb-2 px-4 border-b border-green-900/30 pb-1">
-            System_Modules
+        <nav className="py-6 space-y-1 overflow-y-auto h-[calc(100vh-10rem)]">
+          <div className="px-6 pb-2 mb-2 text-xs font-bold text-lime-600/70 uppercase tracking-widest">
+            Navegação Principal
           </div>
           
           {user.role === UserRole.ADMIN && (
             <>
-              <MenuLink page="dashboard" icon={LayoutDashboard} label="Mainframe" />
-              <MenuLink page="inventory" icon={Package} label="Global_Stock" />
-              <MenuLink page="products" icon={Terminal} label="Products_DB" />
-              <MenuLink page="stores" icon={StoreIcon} label="Nodes/Stores" />
-              <MenuLink page="users" icon={Users} label="User_Access" />
-              <MenuLink page="sales_history" icon={ShoppingCart} label="Trans_Logs" />
+              <MenuLink page="dashboard" icon={LayoutDashboard} label="Dashboard" />
+              <MenuLink page="inventory" icon={Package} label="Estoque Global" />
+              <MenuLink page="products" icon={Sprout} label="Produtos / Strains" />
+              <MenuLink page="stores" icon={StoreIcon} label="Unidades" />
+              <MenuLink page="users" icon={Users} label="Equipe" />
+              <MenuLink page="sales_history" icon={ShoppingCart} label="Vendas" />
             </>
           )}
 
           {user.role === UserRole.SELLER && (
             <>
-              <MenuLink page="pos" icon={ShoppingCart} label="POS_Terminal" />
-              <MenuLink page="store_inventory" icon={Package} label="Local_Stock" />
+              <MenuLink page="pos" icon={ShoppingCart} label="PDV - Balcão" />
+              <MenuLink page="store_inventory" icon={Package} label="Estoque Local" />
             </>
           )}
 
           {user.role === UserRole.CLIENT && (
-            <MenuLink page="catalog" icon={StoreIcon} label="Public_Catalog" />
+            <MenuLink page="catalog" icon={StoreIcon} label="Catálogo Premium" />
           )}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-zinc-950 border-t border-green-900/50">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-sm bg-green-900/20 border border-green-800 flex items-center justify-center text-green-500 font-bold">
+        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#022c22] to-[#064e3b] border-t border-green-800/50 rounded-br-3xl">
+          <div className="flex items-center justify-between mb-2 p-3 bg-green-900/30 rounded-xl border border-green-800/30">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-full bg-lime-500/20 border border-lime-500/30 flex items-center justify-center text-lime-400 font-bold">
                 {user.name.charAt(0)}
               </div>
               <div className="text-sm">
-                <p className="font-bold text-green-400">{user.name}</p>
-                <p className="text-[10px] text-zinc-500 uppercase">{user.role}</p>
+                <p className="font-bold text-lime-100">{user.name}</p>
+                <p className="text-[10px] text-lime-300/70 uppercase font-medium">{user.role}</p>
               </div>
             </div>
-            <button onClick={onLogout} className="text-red-900 hover:text-red-500 transition-colors">
+            <button onClick={onLogout} className="text-red-400/70 hover:text-red-400 transition-colors p-2 hover:bg-red-900/20 rounded-lg">
               <Power className="w-5 h-5" />
             </button>
-          </div>
-          <div className="text-[9px] text-green-900 text-center mt-2">
-             CONNECTED: {new Date().toLocaleTimeString()}
           </div>
         </div>
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden bg-black text-zinc-300">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#022c22] relative">
+         {/* Background Glow */}
+         <div className="absolute top-[-20%] right-[-20%] w-[50%] h-[50%] bg-lime-900/10 rounded-full blur-[120px] pointer-events-none"></div>
+
         {/* Mobile Header */}
-        <header className="lg:hidden flex items-center justify-between p-4 bg-zinc-950 border-b border-green-900">
-          <button onClick={() => setIsSidebarOpen(true)} className="text-green-500">
+        <header className="lg:hidden flex items-center justify-between p-4 bg-[#064e3b] border-b border-green-800">
+          <button onClick={() => setIsSidebarOpen(true)} className="text-lime-400">
             <Menu className="w-6 h-6" />
           </button>
-          <span className="font-bold text-green-500 tracking-widest">3L SYSTEM</span>
+          <span className="font-bold text-lime-400 tracking-tight">3L GESTÃO</span>
           <div className="w-6" /> {/* Spacer */}
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar z-10">
           {children}
         </main>
       </div>
