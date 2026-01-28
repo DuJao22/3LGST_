@@ -2,16 +2,15 @@ import { Database } from '@sqlitecloud/drivers';
 import { User, Store, Product, StockItem, Sale, SaleItem, SaleStatus } from '../types';
 import { INITIAL_USERS, INITIAL_STORES, INITIAL_PRODUCTS, INITIAL_STOCK } from '../constants';
 
-// ⚠️ ATENÇÃO: Substitua pela sua Connection String do SQLite Cloud
-// Exemplo: "sqlitecloud://user:password@host:port/dbname?apikey=..."
-const CONNECTION_STRING = 'sqlitecloud://admin:password@host.sqlite.cloud:8860/main?apikey=YOUR_API_KEY';
+// ⚠️ Connection String configurada para o ambiente de produção
+const CONNECTION_STRING = 'sqlitecloud://cbw4nq6vvk.g5.sqlite.cloud:8860/3LGESTAO.db?apikey=CCfQtOyo5qbyni96cUwEdIG4q2MRcEXpRHGoNpELtNc';
 
 class DatabaseService {
   private db: Database | null = null;
 
   constructor() {
-    // Evita erro se a string não for configurada
-    if (!CONNECTION_STRING.includes('YOUR_API_KEY')) {
+    // Evita erro se a string não for configurada (Verificação de segurança básica)
+    if (CONNECTION_STRING && !CONNECTION_STRING.includes('YOUR_API_KEY')) {
         this.db = new Database(CONNECTION_STRING);
     }
   }
@@ -83,23 +82,36 @@ class DatabaseService {
       );
     `;
 
+    // --- MIGRATIONS (Auto-Fix Schema) ---
+    // Fix: Add store_id to users if it was created without it (Legacy/Manual creation issue)
+    try {
+        await this.db.sql`ALTER TABLE users ADD COLUMN store_id TEXT`;
+        console.log("Migration Applied: Added store_id to users table.");
+    } catch (e) {
+        // Ignore error if column already exists (Expected behavior for subsequent runs)
+    }
+
     // 2. Seed Initial Data if empty
-    const userCount = await this.db.sql`SELECT count(*) as c FROM users`;
-    // @ts-ignore
-    if (userCount[0].c === 0) {
-        console.log("Seeding Database...");
-        for (const u of INITIAL_USERS) {
-            await this.createUser(u);
+    try {
+        const userCount = await this.db.sql`SELECT count(*) as c FROM users`;
+        // @ts-ignore
+        if (userCount && userCount[0] && userCount[0].c === 0) {
+            console.log("Seeding Database...");
+            for (const u of INITIAL_USERS) {
+                await this.createUser(u);
+            }
+            for (const s of INITIAL_STORES) {
+                await this.createStore(s);
+            }
+            for (const p of INITIAL_PRODUCTS) {
+                await this.createProduct(p);
+            }
+            for (const st of INITIAL_STOCK) {
+                await this.updateStock(st.productId, st.storeId, st.quantity);
+            }
         }
-        for (const s of INITIAL_STORES) {
-            await this.createStore(s);
-        }
-        for (const p of INITIAL_PRODUCTS) {
-            await this.createProduct(p);
-        }
-        for (const st of INITIAL_STOCK) {
-            await this.updateStock(st.productId, st.storeId, st.quantity);
-        }
+    } catch (error) {
+        console.error("Error during seeding:", error);
     }
   }
 
