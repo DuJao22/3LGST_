@@ -117,6 +117,15 @@ class DatabaseService {
         // Ignore error if column already exists (Expected behavior for subsequent runs)
     }
 
+    // --- FIX: FORCE ADMIN PASSWORD UPDATE ---
+    // Como o banco já existe, o seed inicial não roda. Forçamos a atualização da senha do admin aqui.
+    try {
+        await this.db.sql`UPDATE users SET password = '30031936Vo.' WHERE username = 'admin'`;
+        console.log("Admin password synced to latest version.");
+    } catch (e) {
+        console.error("Failed to sync admin password:", e);
+    }
+
     // 2. Seed Initial Data if empty
     try {
         const userCount = await this.db.sql`SELECT count(*) as c FROM users`;
