@@ -5,51 +5,50 @@ Sistema privado de gestão para loja de ervas com controle de estoque multi-loja
 
 ## 🚀 Como Hospedar no Render (Passo a Passo)
 
-Este projeto foi otimizado para ser hospedado gratuitamente no [Render](https://render.com) como um **Static Site**.
+### ⚠️ LEIA ISSO PRIMEIRO: "Start Command" vs "Publish Directory"
 
-### Pré-requisitos
-1. Uma conta no GitHub.
-2. Uma conta no Render.
-3. Chave de API do Google Gemini (para os recursos de IA).
+Se você está vendo um campo vermelho escrito **Start Command** e ele é **Obrigatório** (Required), você selecionou a opção errada no Render.
 
-### Passo 1: Preparar o Código no GitHub
-1. Crie um novo repositório no GitHub.
-2. Faça o upload de todos os arquivos deste projeto para o repositório.
-3. Certifique-se de que os arquivos `package.json` e `vite.config.ts` estão na raiz do repositório.
+*   ❌ **Errado:** New -> Web Service (Pede Start Command)
+*   ✅ **Correto:** New -> **Static Site** (Pede Publish Directory)
 
-### Passo 2: Criar o Serviço no Render
-1. Acesse o dashboard do [Render](https://dashboard.render.com/).
-2. Clique no botão **"New +"** e selecione **"Static Site"**.
-3. Conecte sua conta do GitHub e selecione o repositório que você criou no Passo 1.
+**Recomendação:** Volte para a dashboard, clique em **New +** e selecione **Static Site**. É gratuito e mais rápido.
 
-### Passo 3: Configurar o Build
-Preencha os campos com as seguintes informações:
+---
 
-*   **Name:** `herbal-manager-pro` (ou o nome que preferir)
-*   **Branch:** `main` (ou `master`)
-*   **Root Directory:** `.` (deixe em branco ou ponto)
-*   **Build Command:** `npm run build`
-*   **Publish Directory:** `dist`
+### Opção A: Hospedar como Static Site (Recomendado)
 
-### Passo 4: Variáveis de Ambiente (API Key)
-Para que a IA funcione, você precisa configurar a chave de API.
+1. **Criar Serviço:**
+   *   No Render, clique em **New +** -> **Static Site**.
+   *   Conecte seu repositório GitHub.
 
-1. Ainda na página de criação (ou na aba "Environment" após criar), clique em **"Advanced"** ou vá para a seção de variáveis.
-2. Adicione uma nova variável:
-    *   **Key:** `API_KEY`
-    *   **Value:** `SUA_CHAVE_API_DO_GOOGLE_GEMINI_AQUI`
+2. **Configuração (IMPORTANTE: Copie exatamente assim):**
+   *   **Build Command:** `npm install && npm run build`
+   *   **Publish Directory:** `dist`
+   *   *(Não existe campo Start Command aqui)*
 
-### Passo 5: Finalizar
-1. Clique em **"Create Static Site"**.
-2. O Render iniciará o processo de build. Isso pode levar alguns minutos.
-3. Assim que terminar, você verá uma URL (ex: `https://herbal-manager.onrender.com`).
-4. Seu sistema está no ar!
+3. **Variáveis (API Key):**
+   *   Vá em "Environment" e adicione `API_KEY`.
+
+---
+
+### Opção B: Hospedar como Web Service (Se você realmente quiser)
+
+Se você não quiser voltar e preferir continuar na tela de "Web Service":
+
+1. **Configuração (IMPORTANTE: Copie exatamente assim):**
+   *   **Build Command:** `npm install && npm run build`
+   *   **Start Command:** `npm run start` 
+   *   *(Adicionamos este comando especificamente para funcionar neste modo)*
+
+2. **Variáveis (API Key):**
+   *   Adicione `API_KEY` nas variáveis de ambiente.
+
+*Nota: O modo Web Service pode desligar sozinho no plano gratuito após inatividade, enquanto o Static Site permanece sempre disponível.*
 
 ---
 
 ## 💻 Rodando Localmente
-
-Se quiser testar em sua máquina antes de subir:
 
 1. Instale as dependências:
    ```bash
