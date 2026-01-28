@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataProvider, useData } from './context/DataContext';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
@@ -14,19 +14,52 @@ import OrdersManager from './components/OrdersManager';
 import { AuthState, User, UserRole } from './types';
 import { Leaf, Lock, User as UserIcon, Sprout, Loader2 } from 'lucide-react';
 
+const LOCAL_STORAGE_KEY = '3l_gestao_user';
+
 const AuthApp: React.FC = () => {
   const { users, isLoading } = useData();
-  const [auth, setAuth] = useState<AuthState>({ user: null, isAuthenticated: false });
+  
+  // Initialize Auth State from LocalStorage
+  const [auth, setAuth] = useState<AuthState>(() => {
+    const savedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedUser) {
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        return { user: parsedUser, isAuthenticated: true };
+      } catch (e) {
+        console.error("Failed to parse stored user", e);
+        return { user: null, isAuthenticated: false };
+      }
+    }
+    return { user: null, isAuthenticated: false };
+  });
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [currentPage, setCurrentPage] = useState('dashboard');
+
+  // Initialize Page based on Auth Role (persisted)
+  const [currentPage, setCurrentPage] = useState(() => {
+    const savedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedUser) {
+       try {
+         const user = JSON.parse(savedUser);
+         if (user.role === UserRole.SELLER) return 'pos';
+         if (user.role === UserRole.CLIENT) return 'catalog';
+         return 'dashboard';
+       } catch { return 'dashboard'; }
+    }
+    return 'dashboard';
+  });
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     const foundUser = users.find(u => u.username === username && u.password === password);
     
     if (foundUser) {
+      // Save to persistence
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(foundUser));
+      
       setAuth({ user: foundUser, isAuthenticated: true });
       if (foundUser.role === UserRole.SELLER) setCurrentPage('pos');
       else if (foundUser.role === UserRole.CLIENT) setCurrentPage('catalog');
@@ -37,10 +70,14 @@ const AuthApp: React.FC = () => {
   };
 
   const handleLogout = () => {
+    // Clear persistence
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    
     setAuth({ user: null, isAuthenticated: false });
     setUsername('');
     setPassword('');
     setError('');
+    setCurrentPage('dashboard');
   };
 
   if (isLoading) {

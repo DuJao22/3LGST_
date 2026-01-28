@@ -3,40 +3,31 @@
 Sistema privado de gestão para loja de ervas com controle de estoque multi-loja, PDV e Dashboard.
 **Desenvolvido por D22**
 
-## 🚀 Como Hospedar no Render (Passo a Passo)
+## 🚀 Como Hospedar no Render (Guia Atualizado)
 
-### ⚠️ LEIA ISSO PRIMEIRO: "Start Command" vs "Publish Directory"
+### 1. Criar Serviço
+1.  No Render, clique em **New +** -> **Static Site**.
+2.  Conecte seu repositório.
 
-Se você está vendo um campo vermelho escrito **Start Command** e ele é **Obrigatório** (Required), você selecionou a opção errada no Render.
+### 2. Configurações de Build
+*   **Build Command:** `npm install && npm run build`
+*   **Publish Directory:** `dist`
 
-*   ❌ **Errado:** New -> Web Service (Pede Start Command)
-*   ✅ **Correto:** New -> **Static Site** (Pede Publish Directory)
+### 3. Configurar Variáveis de Ambiente (Opcional mas Recomendado)
+Para maior segurança, vá na aba **Environment** e adicione:
+*   **Key:** `VITE_DB_CONNECTION_STRING`
+*   **Value:** `sqlitecloud://...sua_string_de_conexao...`
 
-**Recomendação:** Volte para a dashboard, clique em **New +** e selecione **Static Site**. É gratuito e mais rápido.
+*Se você não configurar isso, o sistema usará a string de conexão padrão embutida no código.*
 
----
+### 4. ⚠️ IMPORTANTE: Configurar Rewrite (SPA)
+Para que a navegação funcione ao recarregar a página, você DEVE configurar isso:
 
-### Opção A: Hospedar como Static Site (Recomendado)
-
-1. **Criar Serviço:**
-   *   No Render, clique em **New +** -> **Static Site**.
-   *   Conecte seu repositório GitHub.
-
-2. **Configuração (IMPORTANTE: Copie exatamente assim):**
-   *   **Build Command:** `npm install && npm run build`
-   *   **Publish Directory:** `dist`
-
----
-
-### Opção B: Hospedar como Web Service (Se você realmente quiser)
-
-Se você não quiser voltar e preferir continuar na tela de "Web Service":
-
-1. **Configuração (IMPORTANTE: Copie exatamente assim):**
-   *   **Build Command:** `npm install && npm run build`
-   *   **Start Command:** `npm run start` 
-
-*Nota: O modo Web Service pode desligar sozinho no plano gratuito após inatividade, enquanto o Static Site permanece sempre disponível.*
+1.  Vá na aba **Redirects/Rewrites**.
+2.  Adicione uma nova regra:
+    *   **Source:** `/*`
+    *   **Destination:** `/index.html`
+    *   **Action:** `Rewrite`
 
 ---
 
@@ -56,11 +47,11 @@ Se você não quiser voltar e preferir continuar na tela de "Web Service":
 
 ## 🛠 Tecnologias Utilizadas
 
-*   React 18
+*   React 18 + Vite
 *   TypeScript
+*   SQLite Cloud (Driver Oficial)
 *   Tailwind CSS
-*   Recharts (Gráficos)
-*   Lucide React (Ícones)
+*   Recharts
 
 ---
 

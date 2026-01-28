@@ -2,16 +2,42 @@ import { Database } from '@sqlitecloud/drivers';
 import { User, Store, Product, StockItem, Sale, SaleItem, SaleStatus } from '../types';
 import { INITIAL_USERS, INITIAL_STORES, INITIAL_PRODUCTS, INITIAL_STOCK } from '../constants';
 
-// ⚠️ Connection String configurada para o ambiente de produção
-const CONNECTION_STRING = 'sqlitecloud://cbw4nq6vvk.g5.sqlite.cloud:8860/3LGESTAO.db?apikey=CCfQtOyo5qbyni96cUwEdIG4q2MRcEXpRHGoNpELtNc';
+// 1. Tenta pegar a string do ambiente (Configuração do Render)
+// 2. Se não existir, usa a string hardcoded (Fallback/Local)
+
+// Safety check for import.meta.env to prevent "Cannot read properties of undefined"
+const getEnvConnectionString = () => {
+    try {
+        // Use optional chaining or explicit check
+        const meta = import.meta as any;
+        if (typeof meta !== 'undefined' && meta.env) {
+            return meta.env.VITE_DB_CONNECTION_STRING;
+        }
+    } catch (e) {
+        console.warn("Error reading environment variables:", e);
+    }
+    return undefined;
+};
+
+const ENV_CONNECTION_STRING = getEnvConnectionString();
+const FALLBACK_CONNECTION_STRING = 'sqlitecloud://cbw4nq6vvk.g5.sqlite.cloud:8860/3LGESTAO.db?apikey=CCfQtOyo5qbyni96cUwEdIG4q2MRcEXpRHGoNpELtNc';
+
+const CONNECTION_STRING = ENV_CONNECTION_STRING || FALLBACK_CONNECTION_STRING;
 
 class DatabaseService {
   private db: Database | null = null;
 
   constructor() {
-    // Evita erro se a string não for configurada (Verificação de segurança básica)
-    if (CONNECTION_STRING && !CONNECTION_STRING.includes('YOUR_API_KEY')) {
-        this.db = new Database(CONNECTION_STRING);
+    // Verificação de segurança básica para garantir que temos uma string válida
+    if (CONNECTION_STRING && (CONNECTION_STRING.includes('sqlitecloud://') || CONNECTION_STRING.includes('sqlite:'))) {
+        try {
+            this.db = new Database(CONNECTION_STRING);
+            console.log("Database Driver Initialized");
+        } catch (error) {
+            console.error("Failed to initialize Database driver:", error);
+        }
+    } else {
+        console.warn("Invalid Connection String provided.");
     }
   }
 
@@ -21,7 +47,7 @@ class DatabaseService {
 
   async init() {
     if (!this.db) {
-        console.warn("SQLite Cloud Connection String not configured.");
+        console.warn("SQLite Cloud Connection String not configured or invalid.");
         return;
     }
 
@@ -86,7 +112,7 @@ class DatabaseService {
     // Fix: Add store_id to users if it was created without it (Legacy/Manual creation issue)
     try {
         await this.db.sql`ALTER TABLE users ADD COLUMN store_id TEXT`;
-        console.log("Migration Applied: Added store_id to users table.");
+        // console.log("Migration Applied: Added store_id to users table.");
     } catch (e) {
         // Ignore error if column already exists (Expected behavior for subsequent runs)
     }
