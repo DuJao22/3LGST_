@@ -1,0 +1,5 @@
+{
+  "name": "HerbalManager Pro",
+  "description": "Sistema privado de gestão para loja de ervas com controle de estoque multi-loja, níveis de acesso (Admin, Vendedor, Cliente) e integração IA. Desenvolvido por D22.",
+  "requestFramePermissions": []
+}
