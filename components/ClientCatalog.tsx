@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useData } from '../context/DataContext';
 import { User, SaleItem, Product } from '../types';
-import { ShoppingCart, Plus, Minus, Trash2, Store as StoreIcon, CheckCircle, Leaf, X } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2, Store as StoreIcon, CheckCircle, Terminal, X, Code2 } from 'lucide-react';
 
 interface ClientCatalogProps {
   user: User;
@@ -32,7 +32,7 @@ const ClientCatalog: React.FC<ClientCatalogProps> = ({ user }) => {
     const currentQtyInCart = existingItem ? existingItem.quantity : 0;
 
     if (currentQtyInCart + 1 > currentStock) {
-      alert("Estoque insuficiente nesta loja.");
+      alert("INSUFFICIENT STOCK AT SELECTED NODE.");
       return;
     }
 
@@ -62,7 +62,7 @@ const ClientCatalog: React.FC<ClientCatalogProps> = ({ user }) => {
         
         const currentStock = getStockForProduct(productId);
         if (newQty > currentStock) {
-            alert("Limite de estoque atingido.");
+            alert("MAX STOCK LIMIT REACHED.");
             return item;
         }
         return { ...item, quantity: newQty, total: newQty * item.unitPrice };
@@ -79,11 +79,10 @@ const ClientCatalog: React.FC<ClientCatalogProps> = ({ user }) => {
     if (!selectedStoreId || cart.length === 0) return;
     
     // Process sale acting as "Online Order"
-    // We use the client's name as customerName and "Pedido Online" as sellerName or similar to distinguish
-    processSale(selectedStoreId, user.id, "Auto-Atendimento (App)", cart, user.name);
+    processSale(selectedStoreId, user.id, "Auto-Terminal (Web)", cart, user.name);
     
     setCart([]);
-    setSuccessMsg("Pedido realizado com sucesso! Retire na loja selecionada.");
+    setSuccessMsg("ORDER EXECUTED SUCCESSFULLY. PROCEED TO PICKUP.");
     setIsCartOpen(false);
     setTimeout(() => setSuccessMsg(''), 5000);
   };
@@ -94,36 +93,36 @@ const ClientCatalog: React.FC<ClientCatalogProps> = ({ user }) => {
   return (
     <div className="relative min-h-[calc(100vh-8rem)]">
       {/* Header / Controls */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-stone-200 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 sticky top-0 z-10">
+      <div className="bg-zinc-900 p-4 rounded-sm border border-green-900/50 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 sticky top-0 z-10 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
         <div>
-           <h1 className="text-2xl font-bold text-stone-800">Faça seu Pedido</h1>
-           <p className="text-stone-500 text-sm">Selecione os produtos e retire na loja.</p>
+           <h1 className="text-xl font-bold text-green-500 tracking-widest uppercase">Public_Access_Terminal</h1>
+           <p className="text-zinc-500 text-xs font-mono">Select items for acquisition.</p>
         </div>
         
         <div className="flex items-center gap-4 w-full md:w-auto">
-            <div className="flex items-center gap-2 bg-stone-100 px-3 py-2 rounded-lg flex-1 md:flex-none">
-                <StoreIcon className="w-4 h-4 text-stone-500" />
+            <div className="flex items-center gap-2 bg-black border border-green-900 px-3 py-2 rounded-sm flex-1 md:flex-none">
+                <StoreIcon className="w-4 h-4 text-green-600" />
                 <select 
                     value={selectedStoreId}
                     onChange={(e) => {
                         setSelectedStoreId(e.target.value);
                         setCart([]); // Clear cart if store changes to avoid stock inconsistencies
                     }}
-                    className="bg-transparent border-none outline-none text-sm font-medium text-stone-700 w-full"
+                    className="bg-transparent border-none outline-none text-xs font-mono text-green-400 w-full uppercase"
                 >
                     {stores.map(store => (
-                        <option key={store.id} value={store.id}>{store.name}</option>
+                        <option key={store.id} value={store.id} className="bg-black text-green-400">{store.name}</option>
                     ))}
                 </select>
             </div>
 
             <button 
                 onClick={() => setIsCartOpen(true)}
-                className="relative bg-green-700 text-white p-2 rounded-lg hover:bg-green-800 transition-colors"
+                className="relative bg-green-900/20 border border-green-600 text-green-400 p-2 rounded-sm hover:bg-green-500 hover:text-black transition-all hover:shadow-[0_0_10px_rgba(34,197,94,0.4)]"
             >
                 <ShoppingCart className="w-6 h-6" />
                 {cartItemCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
+                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-sm border border-black">
                         {cartItemCount}
                     </span>
                 )}
@@ -132,7 +131,7 @@ const ClientCatalog: React.FC<ClientCatalogProps> = ({ user }) => {
       </div>
 
       {successMsg && (
-        <div className="bg-green-100 border border-green-200 text-green-800 p-4 rounded-xl mb-6 flex items-center animate-pulse">
+        <div className="bg-green-900/20 border border-green-500 text-green-400 p-4 rounded-sm mb-6 flex items-center animate-pulse font-mono text-sm">
             <CheckCircle className="w-5 h-5 mr-3" />
             {successMsg}
         </div>
@@ -145,37 +144,37 @@ const ClientCatalog: React.FC<ClientCatalogProps> = ({ user }) => {
             const hasStock = stockQty > 0;
             
             return (
-                <div key={product.id} className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow">
-                    <div className="h-48 bg-stone-100 flex items-center justify-center overflow-hidden relative">
+                <div key={product.id} className="bg-zinc-900 border border-green-900/30 rounded-sm overflow-hidden flex flex-col h-full hover:border-green-500 transition-colors group">
+                    <div className="h-48 bg-black flex items-center justify-center overflow-hidden relative border-b border-green-900/30">
                         {product.imageUrl ? (
-                            <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                            <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity grayscale hover:grayscale-0" />
                         ) : (
-                            <Leaf className="w-12 h-12 text-stone-300" />
+                            <Terminal className="w-12 h-12 text-green-900" />
                         )}
                         {!hasStock && (
-                            <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
-                                <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold border border-red-200">Esgotado nesta loja</span>
+                            <div className="absolute inset-0 bg-black/80 flex items-center justify-center border border-red-900 m-2">
+                                <span className="text-red-500 text-xs font-bold font-mono tracking-widest border border-red-500 px-2 py-1">[OUT_OF_STOCK]</span>
                             </div>
                         )}
                     </div>
                     <div className="p-4 flex-1 flex flex-col">
                         <div className="flex justify-between items-start mb-2">
-                             <h3 className="font-bold text-lg text-stone-800 leading-tight">{product.name}</h3>
+                             <h3 className="font-bold text-sm text-green-400 leading-tight uppercase font-mono">{product.name}</h3>
                         </div>
-                        <p className="text-sm text-stone-500 mb-4 line-clamp-2 flex-1">{product.description}</p>
+                        <p className="text-xs text-zinc-500 mb-4 line-clamp-2 flex-1 font-mono">{product.description}</p>
                         
-                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-stone-100">
+                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-green-900/30">
                              <div>
-                                <p className="text-xs text-stone-400">{product.weightUnit}</p>
-                                <p className="text-lg font-bold text-green-700">R$ {product.price.toFixed(2)}</p>
+                                <p className="text-[10px] text-zinc-600 uppercase">{product.weightUnit}</p>
+                                <p className="text-lg font-bold text-white font-mono">R$ {product.price.toFixed(2)}</p>
                              </div>
                              <button 
                                 onClick={() => addToCart(product)}
                                 disabled={!hasStock}
-                                className={`p-2 rounded-full transition-colors ${
+                                className={`p-2 rounded-sm transition-all border ${
                                     hasStock 
-                                    ? 'bg-stone-800 text-white hover:bg-green-700' 
-                                    : 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                                    ? 'bg-black border-green-600 text-green-500 hover:bg-green-500 hover:text-black shadow-[0_0_5px_rgba(34,197,94,0.2)]' 
+                                    : 'bg-zinc-800 border-zinc-700 text-zinc-600 cursor-not-allowed'
                                 }`}
                              >
                                 <Plus className="w-5 h-5" />
@@ -190,43 +189,43 @@ const ClientCatalog: React.FC<ClientCatalogProps> = ({ user }) => {
       {/* Cart Sidebar Overlay */}
       {isCartOpen && (
         <div className="fixed inset-0 z-50 flex justify-end">
-            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setIsCartOpen(false)} />
-            <div className="relative bg-white w-full max-w-md h-full shadow-2xl flex flex-col animate-slide-in-right">
-                <div className="p-4 bg-green-50 border-b border-green-100 flex justify-between items-center">
-                    <h2 className="text-lg font-bold text-green-900 flex items-center">
-                        <ShoppingCart className="w-5 h-5 mr-2" /> Seu Carrinho
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsCartOpen(false)} />
+            <div className="relative bg-zinc-900 w-full max-w-md h-full shadow-2xl flex flex-col border-l border-green-900">
+                <div className="p-4 bg-black border-b border-green-900 flex justify-between items-center">
+                    <h2 className="text-lg font-bold text-green-500 flex items-center font-mono">
+                        <Code2 className="w-5 h-5 mr-2" /> CART_CONTENTS
                     </h2>
-                    <button onClick={() => setIsCartOpen(false)} className="text-stone-500 hover:text-stone-800">
+                    <button onClick={() => setIsCartOpen(false)} className="text-zinc-500 hover:text-red-500">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                     {cart.length === 0 ? (
-                        <div className="h-full flex flex-col items-center justify-center text-stone-400">
-                            <ShoppingCart className="w-12 h-12 mb-3 opacity-20" />
-                            <p>Seu carrinho está vazio.</p>
-                            <button onClick={() => setIsCartOpen(false)} className="mt-4 text-green-700 font-medium hover:underline">
-                                Continuar comprando
+                        <div className="h-full flex flex-col items-center justify-center text-zinc-700 font-mono">
+                            <Terminal className="w-12 h-12 mb-3 opacity-20" />
+                            <p>BUFFER EMPTY.</p>
+                            <button onClick={() => setIsCartOpen(false)} className="mt-4 text-green-600 text-xs hover:text-green-400 uppercase border border-green-900 px-3 py-1">
+                                [RETURN_TO_CATALOG]
                             </button>
                         </div>
                     ) : (
                         cart.map(item => (
-                            <div key={item.productId} className="flex items-center gap-3 bg-white border border-stone-100 p-3 rounded-lg shadow-sm">
+                            <div key={item.productId} className="flex items-center gap-3 bg-black border border-green-900/50 p-3 rounded-sm">
                                 <div className="flex-1">
-                                    <h4 className="font-medium text-stone-800 line-clamp-1">{item.productName}</h4>
-                                    <p className="text-xs text-stone-500">R$ {item.unitPrice.toFixed(2)} / un</p>
+                                    <h4 className="font-bold text-green-400 text-xs uppercase line-clamp-1">{item.productName}</h4>
+                                    <p className="text-[10px] text-zinc-500 font-mono">R$ {item.unitPrice.toFixed(2)} / un</p>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <div className="flex items-center border border-stone-200 rounded-md bg-stone-50">
-                                        <button onClick={() => updateQuantity(item.productId, -1)} className="p-1 hover:bg-stone-200 text-stone-600"><Minus className="w-3 h-3" /></button>
-                                        <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
-                                        <button onClick={() => updateQuantity(item.productId, 1)} className="p-1 hover:bg-stone-200 text-stone-600"><Plus className="w-3 h-3" /></button>
+                                    <div className="flex items-center border border-green-900 rounded-sm bg-zinc-900">
+                                        <button onClick={() => updateQuantity(item.productId, -1)} className="p-1 hover:bg-green-900/50 text-green-600"><Minus className="w-3 h-3" /></button>
+                                        <span className="w-8 text-center text-xs font-mono text-white">{item.quantity}</span>
+                                        <button onClick={() => updateQuantity(item.productId, 1)} className="p-1 hover:bg-green-900/50 text-green-600"><Plus className="w-3 h-3" /></button>
                                     </div>
                                     <div className="text-right min-w-[60px]">
-                                        <p className="font-bold text-sm text-stone-800">R$ {item.total.toFixed(2)}</p>
+                                        <p className="font-bold text-sm text-white font-mono">R$ {item.total.toFixed(2)}</p>
                                     </div>
-                                    <button onClick={() => removeFromCart(item.productId)} className="text-red-400 hover:text-red-600">
+                                    <button onClick={() => removeFromCart(item.productId)} className="text-red-900 hover:text-red-500">
                                         <Trash2 className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -235,21 +234,21 @@ const ClientCatalog: React.FC<ClientCatalogProps> = ({ user }) => {
                     )}
                 </div>
 
-                <div className="p-4 border-t border-stone-100 bg-stone-50">
-                    <div className="flex justify-between items-center mb-4">
-                        <span className="text-stone-600">Total do Pedido</span>
-                        <span className="text-2xl font-bold text-green-800">R$ {cartTotal.toFixed(2)}</span>
+                <div className="p-4 border-t border-green-900 bg-black">
+                    <div className="flex justify-between items-center mb-4 font-mono">
+                        <span className="text-zinc-500 text-xs uppercase">Total_Value</span>
+                        <span className="text-2xl font-bold text-green-500">R$ {cartTotal.toFixed(2)}</span>
                     </div>
                     <button 
                         onClick={handleCheckout}
                         disabled={cart.length === 0}
-                        className={`w-full py-3 rounded-xl font-bold text-lg shadow-sm transition-transform active:scale-95 ${
+                        className={`w-full py-3 rounded-sm font-bold text-sm uppercase tracking-widest transition-all ${
                             cart.length > 0
-                            ? 'bg-green-700 text-white hover:bg-green-800'
-                            : 'bg-stone-300 text-stone-500 cursor-not-allowed'
+                            ? 'bg-green-600 text-black hover:bg-green-500 shadow-[0_0_15px_rgba(22,163,74,0.4)]'
+                            : 'bg-zinc-800 text-zinc-600 border border-zinc-700 cursor-not-allowed'
                         }`}
                     >
-                        Finalizar Pedido
+                        [EXECUTE_ORDER]
                     </button>
                 </div>
             </div>

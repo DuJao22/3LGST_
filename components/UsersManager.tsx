@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
 import { UserRole } from '../types';
-import { Trash2, Plus, User as UserIcon, Shield, Store, X } from 'lucide-react';
+import { Trash2, Plus, User as UserIcon, Shield, Store, X, Terminal } from 'lucide-react';
 
 const UsersManager: React.FC = () => {
   const { users, stores, addUser, deleteUser } = useData();
@@ -16,9 +16,8 @@ const UsersManager: React.FC = () => {
 
   const handleSave = () => {
     if (!formData.name || !formData.username || !formData.password) return;
-    // Basic validation: Seller must have a store
     if (formData.role === UserRole.SELLER && !formData.storeId) {
-      alert("Vendedores precisam estar vinculados a uma loja.");
+      alert("ERROR: LINKED_STORE_REQUIRED FOR SELLER_CLASS");
       return;
     }
 
@@ -38,51 +37,51 @@ const UsersManager: React.FC = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-stone-800">Gerenciar Usuários</h1>
+        <h1 className="text-2xl font-bold text-green-500 uppercase tracking-wider">User_Privileges</h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 flex items-center"
+          className="bg-green-900/30 text-green-400 border border-green-600 px-4 py-2 rounded-sm hover:bg-green-500 hover:text-black transition-all flex items-center font-mono text-xs uppercase"
         >
-          <Plus className="w-4 h-4 mr-2" /> Novo Usuário
+          <Plus className="w-4 h-4 mr-2" /> CREATE_USER
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-stone-50 border-b border-stone-200">
+      <div className="bg-zinc-900 rounded-sm border border-green-900/30 overflow-hidden">
+        <table className="w-full text-left border-collapse">
+          <thead className="bg-black border-b border-green-900">
             <tr>
-              <th className="p-4 font-semibold text-stone-600">Usuário</th>
-              <th className="p-4 font-semibold text-stone-600">Login</th>
-              <th className="p-4 font-semibold text-stone-600">Função</th>
-              <th className="p-4 font-semibold text-stone-600">Loja Vinculada</th>
-              <th className="p-4 font-semibold text-stone-600 text-right">Ações</th>
+              <th className="p-4 font-mono text-xs text-green-700 uppercase">Identity</th>
+              <th className="p-4 font-mono text-xs text-green-700 uppercase">Access_Key</th>
+              <th className="p-4 font-mono text-xs text-green-700 uppercase">Class</th>
+              <th className="p-4 font-mono text-xs text-green-700 uppercase">Assigned_Node</th>
+              <th className="p-4 font-mono text-xs text-green-700 uppercase text-right">Ops</th>
             </tr>
           </thead>
           <tbody>
             {users.map(user => (
-              <tr key={user.id} className="border-b border-stone-100 hover:bg-stone-50">
+              <tr key={user.id} className="border-b border-green-900/10 hover:bg-green-900/10 transition-colors">
                 <td className="p-4 flex items-center">
-                  <div className="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center mr-3 text-stone-600">
+                  <div className="w-8 h-8 rounded-sm bg-black border border-green-900 flex items-center justify-center mr-3 text-green-600">
                     <UserIcon className="w-4 h-4" />
                   </div>
-                  <span className="font-medium">{user.name}</span>
+                  <span className="font-bold text-zinc-300 font-mono">{user.name}</span>
                 </td>
-                <td className="p-4 text-stone-600">{user.username}</td>
+                <td className="p-4 text-zinc-500 font-mono">{user.username}</td>
                 <td className="p-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium flex w-fit items-center gap-1
-                    ${user.role === UserRole.ADMIN ? 'bg-purple-100 text-purple-700' : 
-                      user.role === UserRole.SELLER ? 'bg-blue-100 text-blue-700' : 'bg-stone-100 text-stone-700'}`}>
+                  <span className={`px-2 py-1 rounded-sm text-[10px] font-bold uppercase tracking-wider flex w-fit items-center gap-1 border
+                    ${user.role === UserRole.ADMIN ? 'bg-purple-900/20 text-purple-400 border-purple-900' : 
+                      user.role === UserRole.SELLER ? 'bg-blue-900/20 text-blue-400 border-blue-900' : 'bg-zinc-800 text-zinc-400 border-zinc-700'}`}>
                     {user.role === UserRole.ADMIN && <Shield className="w-3 h-3" />}
                     {user.role === UserRole.SELLER && <Store className="w-3 h-3" />}
                     {user.role}
                   </span>
                 </td>
-                <td className="p-4 text-stone-500">
-                  {user.storeId ? stores.find(s => s.id === user.storeId)?.name || 'Loja removida' : '-'}
+                <td className="p-4 text-zinc-500 font-mono text-xs">
+                  {user.storeId ? stores.find(s => s.id === user.storeId)?.name || 'UNKNOWN_NODE' : '-'}
                 </td>
                 <td className="p-4 text-right">
-                  {user.username !== 'admin' && ( // Prevent deleting main admin
-                    <button onClick={() => deleteUser(user.id)} className="text-red-600 hover:text-red-800">
+                  {user.username !== 'admin' && ( 
+                    <button onClick={() => deleteUser(user.id)} className="text-red-900 hover:text-red-500">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   )}
@@ -94,64 +93,64 @@ const UsersManager: React.FC = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-               <h2 className="text-xl font-bold">Novo Usuário</h2>
-               <button onClick={() => setIsModalOpen(false)}><X className="w-5 h-5 text-stone-500" /></button>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-zinc-900 border border-green-500 rounded-sm shadow-[0_0_30px_rgba(34,197,94,0.2)] max-w-md w-full p-6">
+            <div className="flex justify-between items-center mb-4 border-b border-green-900/50 pb-2">
+               <h2 className="text-xl font-bold text-green-500 uppercase font-mono">Add New Operative</h2>
+               <button onClick={() => setIsModalOpen(false)}><X className="w-5 h-5 text-zinc-500 hover:text-red-500" /></button>
             </div>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1">Nome Completo</label>
+                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Full Designation</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full border border-stone-300 rounded-lg p-2 outline-none"
+                  className="w-full bg-black border border-green-900 rounded-sm p-2 text-green-400 focus:border-green-500 outline-none font-mono"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1">Login</label>
+                    <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Access ID</label>
                     <input
                     type="text"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full border border-stone-300 rounded-lg p-2 outline-none"
+                    className="w-full bg-black border border-green-900 rounded-sm p-2 text-green-400 focus:border-green-500 outline-none font-mono"
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1">Senha</label>
+                    <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Passkey</label>
                     <input
                     type="text"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full border border-stone-300 rounded-lg p-2 outline-none"
+                    className="w-full bg-black border border-green-900 rounded-sm p-2 text-green-400 focus:border-green-500 outline-none font-mono"
                     />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1">Função</label>
+                <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Clearance Level</label>
                 <select 
                     value={formData.role} 
                     onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
-                    className="w-full border border-stone-300 rounded-lg p-2 outline-none"
+                    className="w-full bg-black border border-green-900 rounded-sm p-2 text-green-400 focus:border-green-500 outline-none font-mono uppercase"
                 >
-                    <option value={UserRole.ADMIN}>Administrador</option>
-                    <option value={UserRole.SELLER}>Vendedor</option>
-                    <option value={UserRole.CLIENT}>Cliente</option>
+                    <option value={UserRole.ADMIN}>Administrator (Root)</option>
+                    <option value={UserRole.SELLER}>Seller (Node Op)</option>
+                    <option value={UserRole.CLIENT}>Client (Public)</option>
                 </select>
               </div>
 
               {formData.role === UserRole.SELLER && (
                 <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1">Loja Vinculada</label>
+                    <label className="block text-xs font-bold text-green-700 mb-1 uppercase">Assign Node</label>
                     <select 
                         value={formData.storeId} 
                         onChange={(e) => setFormData({ ...formData, storeId: e.target.value })}
-                        className="w-full border border-stone-300 rounded-lg p-2 outline-none"
+                        className="w-full bg-black border border-green-900 rounded-sm p-2 text-green-400 focus:border-green-500 outline-none font-mono uppercase"
                     >
-                        <option value="">Selecione uma loja...</option>
+                        <option value="">SELECT NODE...</option>
                         {stores.map(s => (
                             <option key={s.id} value={s.id}>{s.name}</option>
                         ))}
@@ -161,9 +160,9 @@ const UsersManager: React.FC = () => {
 
               <button 
                 onClick={handleSave} 
-                className="w-full mt-2 bg-green-700 text-white py-2 rounded-lg hover:bg-green-800 font-medium"
+                className="w-full mt-4 bg-green-700 text-black py-2 rounded-sm hover:bg-green-500 font-bold uppercase tracking-wider"
               >
-                Criar Usuário
+                Register Entity
               </button>
             </div>
           </div>
