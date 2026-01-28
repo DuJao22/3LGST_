@@ -12,10 +12,10 @@ import SalesHistory from './components/SalesHistory';
 import ClientCatalog from './components/ClientCatalog';
 import OrdersManager from './components/OrdersManager';
 import { AuthState, User, UserRole } from './types';
-import { Leaf, Lock, User as UserIcon, Sprout } from 'lucide-react';
+import { Leaf, Lock, User as UserIcon, Sprout, Loader2 } from 'lucide-react';
 
 const AuthApp: React.FC = () => {
-  const { users } = useData();
+  const { users, isLoading } = useData();
   const [auth, setAuth] = useState<AuthState>({ user: null, isAuthenticated: false });
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -42,6 +42,16 @@ const AuthApp: React.FC = () => {
     setPassword('');
     setError('');
   };
+
+  if (isLoading) {
+      return (
+        <div className="min-h-screen bg-[#022c22] flex flex-col items-center justify-center p-4">
+            <Loader2 className="w-12 h-12 text-lime-500 animate-spin mb-4" />
+            <h2 className="text-xl font-bold text-lime-400">Conectando ao SQLite Cloud...</h2>
+            <p className="text-lime-200/50 text-sm mt-2">Sincronizando dados...</p>
+        </div>
+      );
+  }
 
   if (!auth.isAuthenticated || !auth.user) {
     return (
