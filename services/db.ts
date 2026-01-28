@@ -188,6 +188,11 @@ class DatabaseService {
 
   async deleteStore(id: string) {
     if (!this.db) return;
+    // 1. Limpar estoque associado à loja
+    await this.db.sql`DELETE FROM stock WHERE store_id = ${id}`;
+    // 2. Desvincular usuários da loja (não deletar o usuário, apenas remover o vínculo)
+    await this.db.sql`UPDATE users SET store_id = NULL WHERE store_id = ${id}`;
+    // 3. Deletar a loja
     await this.db.sql`DELETE FROM stores WHERE id = ${id}`;
   }
 
@@ -219,6 +224,9 @@ class DatabaseService {
 
   async deleteProduct(id: string) {
     if (!this.db) return;
+    // 1. Limpar estoque deste produto em todas as lojas
+    await this.db.sql`DELETE FROM stock WHERE product_id = ${id}`;
+    // 2. Deletar o produto
     await this.db.sql`DELETE FROM products WHERE id = ${id}`;
   }
 

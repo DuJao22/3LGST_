@@ -19,6 +19,12 @@ const StoresManager: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const handleDelete = (id: string, name: string) => {
+    if (window.confirm(`ATENÇÃO: Você tem certeza que deseja deletar a unidade "${name}"?\n\nIsso apagará todo o estoque vinculado a esta loja e desvinculará os vendedores.`)) {
+      deleteStore(id);
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -51,7 +57,7 @@ const StoresManager: React.FC = () => {
             </div>
             <div className="pt-4 border-t border-green-900/30 flex justify-end">
               <button 
-                onClick={() => deleteStore(store.id)}
+                onClick={() => handleDelete(store.id, store.name)}
                 className="text-red-900 hover:text-red-500 flex items-center text-xs font-bold uppercase tracking-wider transition-colors"
               >
                 <Trash2 className="w-4 h-4 mr-1" /> Encerrar_Nó

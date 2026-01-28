@@ -48,6 +48,12 @@ const ProductsManager: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const handleDelete = (id: string, name: string) => {
+      if (window.confirm(`ATENÇÃO: Confirmar exclusão do produto "${name}"?\n\nIsso removerá este item do catálogo e zerará o estoque em TODAS as lojas.`)) {
+          deleteProduct(id);
+      }
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -98,7 +104,7 @@ const ProductsManager: React.FC = () => {
                   <button onClick={() => handleOpenModal(product)} className="text-blue-500 hover:text-blue-300">
                     <Edit2 className="w-4 h-4" />
                   </button>
-                  <button onClick={() => deleteProduct(product.id)} className="text-red-900 hover:text-red-500">
+                  <button onClick={() => handleDelete(product.id, product.name)} className="text-red-900 hover:text-red-500">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </td>
