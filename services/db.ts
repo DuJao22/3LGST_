@@ -5,7 +5,6 @@ import { INITIAL_USERS, INITIAL_STORES, INITIAL_PRODUCTS, INITIAL_STOCK } from '
 // 1. Tenta pegar a string do ambiente (Configuração do Render)
 // 2. Se não existir, usa a string hardcoded (Fallback/Local)
 
-// Safety check for import.meta.env to prevent "Cannot read properties of undefined"
 const getEnvConnectionString = () => {
     try {
         // Use optional chaining or explicit check
@@ -26,6 +25,7 @@ const CONNECTION_STRING = ENV_CONNECTION_STRING || FALLBACK_CONNECTION_STRING;
 
 class DatabaseService {
   private db: Database | null = null;
+  private initPromise: Promise<void> | null = null;
 
   constructor() {
     // Verificação de segurança básica para garantir que temos uma string válida
@@ -51,103 +51,148 @@ class DatabaseService {
         return;
     }
 
-    // 1. Create Tables
-    await this.db.sql`
-      CREATE TABLE IF NOT EXISTS users (
-        id TEXT PRIMARY KEY,
-        username TEXT,
-        name TEXT,
-        role TEXT,
-        store_id TEXT,
-        password TEXT
-      );
-    `;
-
-    await this.db.sql`
-      CREATE TABLE IF NOT EXISTS stores (
-        id TEXT PRIMARY KEY,
-        name TEXT,
-        location TEXT
-      );
-    `;
-
-    await this.db.sql`
-      CREATE TABLE IF NOT EXISTS products (
-        id TEXT PRIMARY KEY,
-        name TEXT,
-        category TEXT,
-        weight_unit TEXT,
-        price REAL,
-        description TEXT,
-        active INTEGER,
-        image_url TEXT
-      );
-    `;
-
-    // Composite Key for Stock
-    await this.db.sql`
-      CREATE TABLE IF NOT EXISTS stock (
-        product_id TEXT,
-        store_id TEXT,
-        quantity INTEGER,
-        PRIMARY KEY (product_id, store_id)
-      );
-    `;
-
-    await this.db.sql`
-      CREATE TABLE IF NOT EXISTS sales (
-        id TEXT PRIMARY KEY,
-        store_id TEXT,
-        seller_id TEXT,
-        seller_name TEXT,
-        timestamp INTEGER,
-        total_amount REAL,
-        customer_name TEXT,
-        status TEXT,
-        items_json TEXT
-      );
-    `;
-
-    // --- MIGRATIONS (Auto-Fix Schema) ---
-    // Fix: Add store_id to users if it was created without it (Legacy/Manual creation issue)
-    try {
-        await this.db.sql`ALTER TABLE users ADD COLUMN store_id TEXT`;
-        // console.log("Migration Applied: Added store_id to users table.");
-    } catch (e) {
-        // Ignore error if column already exists (Expected behavior for subsequent runs)
+    // Prevent double initialization (React StrictMode calls useEffect twice)
+    if (this.initPromise) {
+        return this.initPromise;
     }
 
-    // --- FIX: FORCE ADMIN PASSWORD UPDATE ---
-    // Como o banco já existe, o seed inicial não roda. Forçamos a atualização da senha do admin aqui.
-    try {
-        await this.db.sql`UPDATE users SET password = '30031936Vo.' WHERE username = 'admin'`;
-        console.log("Admin password synced to latest version.");
-    } catch (e) {
-        console.error("Failed to sync admin password:", e);
-    }
+    this.initPromise = this.performInitialization();
+    return this.initPromise;
+  }
 
-    // 2. Seed Initial Data if empty
+  private async performInitialization() {
+    if (!this.db) return;
+
     try {
-        const userCount = await this.db.sql`SELECT count(*) as c FROM users`;
-        // @ts-ignore
-        if (userCount && userCount[0] && userCount[0].c === 0) {
-            console.log("Seeding Database...");
-            for (const u of INITIAL_USERS) {
-                await this.createUser(u);
-            }
-            for (const s of INITIAL_STORES) {
-                await this.createStore(s);
-            }
-            for (const p of INITIAL_PRODUCTS) {
-                await this.createProduct(p);
-            }
-            for (const st of INITIAL_STOCK) {
-                await this.updateStock(st.productId, st.storeId, st.quantity);
-            }
+        // 0. Connection Health Check / Retry
+        // Sometimes the socket needs a moment or a retry
+        await this.ensureConnection();
+
+        // 1. Create Tables
+        await this.db.sql`
+        CREATE TABLE IF NOT EXISTS users (
+            id TEXT PRIMARY KEY,
+            username TEXT,
+            name TEXT,
+            role TEXT,
+            store_id TEXT,
+            password TEXT
+        );
+        `;
+
+        await this.db.sql`
+        CREATE TABLE IF NOT EXISTS stores (
+            id TEXT PRIMARY KEY,
+            name TEXT,
+            location TEXT
+        );
+        `;
+
+        await this.db.sql`
+        CREATE TABLE IF NOT EXISTS products (
+            id TEXT PRIMARY KEY,
+            name TEXT,
+            category TEXT,
+            weight_unit TEXT,
+            price REAL,
+            description TEXT,
+            active INTEGER,
+            image_url TEXT
+        );
+        `;
+
+        // Composite Key for Stock
+        await this.db.sql`
+        CREATE TABLE IF NOT EXISTS stock (
+            product_id TEXT,
+            store_id TEXT,
+            quantity INTEGER,
+            PRIMARY KEY (product_id, store_id)
+        );
+        `;
+
+        await this.db.sql`
+        CREATE TABLE IF NOT EXISTS sales (
+            id TEXT PRIMARY KEY,
+            store_id TEXT,
+            seller_id TEXT,
+            seller_name TEXT,
+            timestamp INTEGER,
+            total_amount REAL,
+            customer_name TEXT,
+            status TEXT,
+            items_json TEXT
+        );
+        `;
+
+        // --- MIGRATIONS (Auto-Fix Schema) ---
+        // Fix: Add store_id to users if it was created without it (Legacy/Manual creation issue)
+        try {
+            await this.db.sql`ALTER TABLE users ADD COLUMN store_id TEXT`;
+        } catch (e) {
+            // Ignore error if column already exists
         }
+
+        // --- FIX: FORCE ADMIN PASSWORD UPDATE ---
+        try {
+             // Check if admin exists first to avoid error if table is empty
+             const adminExists = await this.db.sql`SELECT 1 FROM users WHERE username = 'admin' LIMIT 1`;
+             if (Array.isArray(adminExists) && adminExists.length > 0) {
+                 await this.db.sql`UPDATE users SET password = '30031936Vo.' WHERE username = 'admin'`;
+                 console.log("Admin password synced.");
+             }
+        } catch (e) {
+            console.warn("Skipping admin password sync (non-critical):", e);
+        }
+
+        // 2. Seed Initial Data if empty
+        try {
+            const result = await this.db.sql`SELECT count(*) as c FROM users`;
+            // @ts-ignore
+            if (result && result[0] && result[0].c === 0) {
+                console.log("Seeding Database...");
+                for (const u of INITIAL_USERS) {
+                    await this.createUser(u);
+                }
+                for (const s of INITIAL_STORES) {
+                    await this.createStore(s);
+                }
+                for (const p of INITIAL_PRODUCTS) {
+                    await this.createProduct(p);
+                }
+                for (const st of INITIAL_STOCK) {
+                    await this.updateStock(st.productId, st.storeId, st.quantity);
+                }
+            }
+        } catch (error) {
+            console.error("Error during seeding:", error);
+        }
+
     } catch (error) {
-        console.error("Error during seeding:", error);
+        console.error("Critical DB Initialization Error:", error);
+        // Reset promise so we can try again if the component remounts or retries
+        this.initPromise = null;
+        throw error;
     }
+  }
+
+  private async ensureConnection() {
+      if (!this.db) return;
+      
+      let attempts = 0;
+      const maxAttempts = 3;
+      
+      while (attempts < maxAttempts) {
+          try {
+              await this.db.sql`SELECT 1`;
+              return; // Connected
+          } catch (e) {
+              attempts++;
+              console.warn(`DB Connection attempt ${attempts} failed. Retrying...`);
+              await new Promise(resolve => setTimeout(resolve, 1500));
+          }
+      }
+      throw new Error("Failed to connect to SQLite Cloud after multiple attempts.");
   }
 
   // --- USERS ---
